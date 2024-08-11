@@ -16,7 +16,6 @@ namespace LevelPupper__Parser
     public partial class Form1 : Form
     {
         private Parser? parser;
-        Dictionary<string, string>? items;
 
         public Form1()
         {
