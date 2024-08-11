@@ -55,6 +55,8 @@ namespace LevelPupper__Parser.dlls
                 _title = GetTitle(_secondBlock);
                 _description = GetDescription(_secondBlock);
                 _rewards = GetRewards(doc);
+
+                MessageBox.Show("Header is match!");
             }
             catch (Exception ex) 
             {

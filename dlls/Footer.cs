@@ -42,9 +42,7 @@ namespace LevelPupper__Parser.dlls
                 if (!Regex.IsMatch(text, @"<h2>Requirements<\/h2>") || !Regex.IsMatch(text, @"<h2>\bAdditional Options\b<\/h2>") || !(Regex.IsMatch(text, @"<h2>\bBoosting Method\b<\/h2>") || Regex.IsMatch(text, @"\bBoosting Methods\b")) || !Regex.IsMatch(text, @"<h2>FAQ<\/h2>"))
                 {
                     throw new Exception("Incorrect tags");
-                }
-
-                MessageBox.Show("Match the Footer!");
+                }                
 
                 items = ParseHtmlBlocks(text);
 
@@ -56,6 +54,8 @@ namespace LevelPupper__Parser.dlls
 
                 boostingMethods = boostingMethod_Parse(items["Boosting Method"]);
                 faqs = FAQs_Parse(items["FAQs"]);
+
+                MessageBox.Show("Match the Footer!");
             }
             catch (Exception ex)
             {
