@@ -15,7 +15,8 @@ First for title, seo and rewards and second for requirements, additional options
 &nbsp;&nbsp;&nbsp;h2 "FAQ(s)"</br>
 </br>
 When program match the input text and complete the parse you\`ll see the popup window with next message 
-"Header is match!" - for first part and "Footer is match!" for second part.
+"Header is match!" - for first part and "Footer is match!" for second part </br> 
+then javascript code is insert into clipboard and can be pasted into browser console to execution.
 </br></br>
 Also such things like "H2 - " or "H3 - " is ignored. 
 Important part for "bold" text, every boldness is automaticaly turns to \<strong> tags if the text is inside
