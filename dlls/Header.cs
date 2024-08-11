@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace LevelPupper__Parser.dlls
 {
@@ -27,9 +28,10 @@ namespace LevelPupper__Parser.dlls
         private readonly HtmlAgilityPack.HtmlDocument doc;
         private readonly string _fisrtBlock;
         private readonly string _secondBlock;
-
         public Header(string html)
         {
+            html = Regex.Replace(html, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
+
             HtmlAgilityPack.HtmlDocument doc = new();
             doc.LoadHtml(html);
 

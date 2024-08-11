@@ -38,8 +38,10 @@ namespace LevelPupper__Parser.dlls
             try
             {
                 string text = ParseHtml(doc.DocumentNode);
-                
-                if (!Regex.IsMatch(text, @"<h2>Requirements<\/h2>") || !Regex.IsMatch(text, @"<h2>\bAdditional Options\b<\/h2>") || !(Regex.IsMatch(text, @"<h2>\bBoosting Method\b<\/h2>") || Regex.IsMatch(text, @"\bBoosting Methods\b")) || !Regex.IsMatch(text, @"<h2>FAQ<\/h2>"))
+
+                text = Regex.Replace(text, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
+
+                if (!Regex.IsMatch(text, @"<h2>Requirements<\/h2>") || !Regex.IsMatch(text, @"<h2>\bAdditional Options\b<\/h2>") || !(Regex.IsMatch(text, @"<h2>\bBoosting Method\b<\/h2>") || Regex.IsMatch(text, @"\bBoosting Methods\b")) || !(Regex.IsMatch(text, @"<h2>FAQ<\/h2>") || Regex.IsMatch(text, @"<h2>FAQs<\/h2>")))
                 {
                     throw new Exception("Incorrect tags");
                 }                
@@ -151,6 +153,8 @@ namespace LevelPupper__Parser.dlls
             if (html is null)
                 throw new Exception("Input string is null");
 
+            html = Regex.Replace(html, @"<(\/?)strong>", string.Empty);
+
             Regex regex = new Regex(@"<li>(.*?)<\/li>", RegexOptions.Singleline);
             MatchCollection matches = regex.Matches(html);
 
@@ -159,7 +163,7 @@ namespace LevelPupper__Parser.dlls
             foreach (Match match in matches)
             {
                 string line = match.Groups[1].Value.Trim();
-                string[] parts = line.Split(new[] { ':' }, 2); // Split by the first colon
+                string[] parts = line.Split(new[] { ':', '–' }, 2); // Split by the first colon
 
                 if (parts.Length == 2)
                 {
