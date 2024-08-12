@@ -130,6 +130,8 @@ namespace LevelPupper__Parser.dlls
             if (html is null)
                 throw new Exception("Input in null");
 
+            html = Regex.Replace(html, @"\[link\!\]", string.Empty);
+
             Regex regex = new Regex(@"<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>", RegexOptions.Singleline);
             MatchCollection matches = regex.Matches(html);
 
@@ -189,7 +191,7 @@ namespace LevelPupper__Parser.dlls
             {
                 if (keyIndex == 3)
                 {
-                    blocks[match.Groups["title"].Value] = match.Groups["content"].Value.Trim();
+                    blocks[match.Groups["title"].Value] = Regex.Replace(match.Groups["content"].Value.Trim(), @"\[link\!\]", string.Empty); 
                     keyIndex++;
                     continue;
                 }

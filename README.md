@@ -18,6 +18,6 @@ When program match the input text and complete the parse you\`ll see the popup w
 "Header is match!" - for first part and "Footer is match!" for second part </br> 
 then javascript code is insert into clipboard and can be pasted into browser console to execution.
 </br></br>
-Also such things like "H2 - " or "H3 - " is ignored. 
+Also such things like "H2 - ", "H3 - " and "\[link!\]" is ignored. 
 Important part for "bold" text, every boldness is automaticaly turns to \<strong> tags if the text is inside
 \<p> or \<li> tags, also if text is inside "Boosting Method" this parameter is ignored \`cause this part is going into an element.
