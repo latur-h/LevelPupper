@@ -130,7 +130,8 @@ namespace LevelPupper__Parser.dlls
             if (html is null)
                 throw new Exception("Input in null");
 
-            html = Regex.Replace(html, @"\[link\!\]", string.Empty);
+            html = Regex.Replace(html, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase);
+            html = Regex.Replace(html, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
 
             Regex regex = new Regex(@"<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>", RegexOptions.Singleline);
             MatchCollection matches = regex.Matches(html);
