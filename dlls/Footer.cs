@@ -44,7 +44,7 @@ namespace LevelPupper__Parser.dlls
                 if (!Regex.IsMatch(text, @"<h2>Requirements<\/h2>") || !Regex.IsMatch(text, @"<h2>\bAdditional Options\b<\/h2>") || !(Regex.IsMatch(text, @"<h2>\bBoosting Method\b<\/h2>") || Regex.IsMatch(text, @"\bBoosting Methods\b")) || !(Regex.IsMatch(text, @"<h2>FAQ<\/h2>") || Regex.IsMatch(text, @"<h2>FAQs<\/h2>")))
                 {
                     throw new Exception("Incorrect tags");
-                }                
+                }
 
                 items = ParseHtmlBlocks(text);
 

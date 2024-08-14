@@ -19,10 +19,10 @@ namespace LevelPupper__Parser.dlls
         public string? _seoDescription;
         public string? _seoTitle;
         public string? _seoURL;
-         
+
         public string? _title;
         public string? _description;
-         
+
         public string? _rewards;
 
         private readonly HtmlAgilityPack.HtmlDocument doc;
@@ -45,7 +45,7 @@ namespace LevelPupper__Parser.dlls
             Init();
         }
 
-        private void Init()        
+        private void Init()
         {
             try
             {
@@ -60,7 +60,7 @@ namespace LevelPupper__Parser.dlls
 
                 MessageBox.Show("Header is match!");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
 
@@ -121,7 +121,21 @@ namespace LevelPupper__Parser.dlls
             }
             return result.ToString();
         }
-        private string GetPreview(string input) => HttpUtility.HtmlDecode(Regex.Replace(Regex.Matches(input, @"<h1>(.*?)<\/h1>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));
+        private string GetPreview(string input)
+        {
+            try
+            {
+                return HttpUtility.HtmlDecode(
+                    Regex.Replace(
+                        Regex.Matches(input, @"<h1>(.*?)<\/h1>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                return string.Empty;
+            }
+        }
         private string GetUTP(string input)
         {
             var matches = Regex.Matches(input, @"<p>(.*?)<\/p>");
@@ -136,7 +150,7 @@ namespace LevelPupper__Parser.dlls
             return HttpUtility.HtmlDecode(Regex.Replace(utp.ToString(), @"\&nbsp\;", string.Empty));
         }
         private string GetTitle(string input) => HttpUtility.HtmlDecode(Regex.Replace(Regex.Matches(input, @"<h1>(.*?)<\/h1>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));
-        private string GetDescription(string input) => HttpUtility.HtmlDecode(Regex.Replace(Regex.Matches(input, @"<\/h1>(.*?)<h2>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));        
+        private string GetDescription(string input) => HttpUtility.HtmlDecode(Regex.Replace(Regex.Matches(input, @"<\/h1>(.*?)<h2>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));
         private string GetRewards(HtmlAgilityPack.HtmlDocument doc)
         {
             var split = Regex.Split(Regex.Replace(_parseHtml(doc.DocumentNode), @"\&nbsp\;", string.Empty), @"<h2>.*?</h2>").Where(x => x.Length > 0).ToArray();
