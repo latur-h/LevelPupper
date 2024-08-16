@@ -28,7 +28,7 @@ function changeSelectElement(trigger, block)
 {
     var selectElement = document.getElementById(trigger);
 
-    if (block == 0) {selectElement.value = "---------"}
+    if (block == 0) { selectElement.value = selectElement.options[0].value; }
     else if (block == 1) { selectElement.value = "blocks_one"; }
     else if (block == 2) { selectElement.value = "blocks_two"; }
 
@@ -66,7 +66,6 @@ javascript:(function()
     document.getElementById("id_description_elements-1-title").value = "Requirements";
 
     document.getElementById("id_description_elements-2-show_title").checked = false;
-
 
     document.getElementById("id_description_elements-3-show_title").checked = true;
     document.getElementById("id_description_elements-3-title").value = "You May Also Like";
