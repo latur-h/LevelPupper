@@ -143,7 +143,7 @@ namespace LevelPupper__Parser.dlls
             StringBuilder utp = new();
 
             utp.Append(@"<ul>");
-            foreach (var match in matches)            
+            foreach (var match in matches)
                 utp.Append($"<li>{(match as Match)?.Groups[1].Value}</li>");
             utp.Append(@"</ul>");
 

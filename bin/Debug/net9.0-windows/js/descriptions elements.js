@@ -24,12 +24,13 @@ async function insertText(requirements, addiptionalOptions, about)
     document.getElementById('cke_1388').click();
 }
 
-function changeBoostingMethod(block)
+function changeSelectElement(trigger, block)
 {
-    var selectElement = document.getElementById('id_description_elements-6-type');
+    var selectElement = document.getElementById(trigger);
 
-    if (block == 1) { selectElement.value = 'blocks_one'; }
-    else if (block == 2) { selectElement.value = 'blocks_two'; }
+    if (block == 0) {selectElement.value = "---------"}
+    else if (block == 1) { selectElement.value = "blocks_one"; }
+    else if (block == 2) { selectElement.value = "blocks_two"; }
 
     var event = new Event('change', { bubbles: true });
     selectElement.dispatchEvent(event);
@@ -66,7 +67,8 @@ javascript:(function()
 
     document.getElementById("id_description_elements-2-show_title").checked = false;
 
-    document.getElementById("id_description_elements-3-show_title").checked = true;    
+
+    document.getElementById("id_description_elements-3-show_title").checked = true;
     document.getElementById("id_description_elements-3-title").value = "You May Also Like";
 
     document.getElementById("id_description_elements-5-show_title").checked = true;
@@ -88,5 +90,7 @@ javascript:(function()
     document.getElementById("id_description_elements-16-title").value = "FAQs";
 })();
 
-changeBoostingMethod("{&boostingMethod&}");
+changeSelectElement("id_description_elements-2-type", "0");
+changeSelectElement("id_description_elements-6-type", "{&boostingMethod&}");
+
 insertText("{&requirements&}", "{&additionalOptions&}", "{&aboutText&}");
