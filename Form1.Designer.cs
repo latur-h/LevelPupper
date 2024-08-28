@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             button_Category = new Button();
             rtConsole = new RichTextBox();
             SuspendLayout();
@@ -62,8 +63,11 @@
             ClientSize = new Size(1054, 558);
             Controls.Add(rtConsole);
             Controls.Add(button_Category);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximumSize = new Size(1070, 597);
+            MinimumSize = new Size(1070, 597);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Level Pupper";
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;
             ResumeLayout(false);
