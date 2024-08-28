@@ -20,7 +20,6 @@ namespace LevelPupper__Parser.dlls
         private Regex _rewards = new(@"^\bRewards\b", RegexOptions.IgnoreCase);
 
         private string currentText = string.Empty;
-        private Dictionary<string, string> items;
 
         public static readonly int WM_CLIPBOARDUPDATE = 0x031D;
 
@@ -35,7 +34,6 @@ namespace LevelPupper__Parser.dlls
         {
             _form = form;
             _handle = handle;
-            items = new();
 
             builder = new(Path.Combine(@"js", @"general.js"), Path.Combine(@"js", @"descriptions elements.js"));
 
