@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -17,8 +18,6 @@ namespace LevelPupper__Parser.dlls
         public string? _aboutTitle;
         public string? _aboutText;
 
-        public Dictionary<string, string>? items;
-
         public Dictionary<string, string>? boostingMethods;
         public Dictionary<string, string>? faqs;
 
@@ -31,38 +30,81 @@ namespace LevelPupper__Parser.dlls
 
             this.doc = doc;
 
-            Init();
+            if (!Init()) throw new Exception("Incorrect tags");
         }
-        private void Init()
+        private bool Init()
         {
+            string text = ParseHtml(doc.DocumentNode);
+
+            text = Regex.Replace(text, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
+
             try
             {
-                string text = ParseHtml(doc.DocumentNode);
-
-                text = Regex.Replace(text, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
-
-                if (!Regex.IsMatch(text, @"<h2>Requirements<\/h2>") || !Regex.IsMatch(text, @"<h2>\bAdditional Options\b<\/h2>") || !(Regex.IsMatch(text, @"<h2>\bBoosting Method\b<\/h2>") || Regex.IsMatch(text, @"\bBoosting Methods\b")) || !(Regex.IsMatch(text, @"<h2>FAQ<\/h2>") || Regex.IsMatch(text, @"<h2>FAQs<\/h2>")))
-                {
-                    throw new Exception("Incorrect tags");
-                }
-
-                items = ParseHtmlBlocks(text);
-
-                _requirements = items["Requirements"];
-                _additionalOptions = items["Additional Options"];
-
-                _aboutTitle = items.ElementAt(items.Count - 2).Key;
-                _aboutText = items.ElementAt(items.Count - 2).Value;
-
-                boostingMethods = boostingMethod_Parse(items["Boosting Method"]);
-                faqs = FAQs_Parse(items["FAQs"]);
-
-                MessageBox.Show("Match the Footer!");
+                if (!Regex.IsMatch(text, @"(<h2>Requirements<\/h2>)|(<h2>Additional Options<\/h2>)|(<h[23]>Boosting Method[s]?<\/h[23]>)|(<h2>FAQ[s]?<\/h2>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))                
+                    throw new Exception("Incorrect tags!");
             }
-            catch (Exception ex)
+            catch (Exception e) { RTConsole.Write(e.Message + "\n", Color.Red); return false; }
+
+            RTConsole.Write("Start footer parsing...");
+
+            try
             {
-                Console.WriteLine(ex.Message);
+                _requirements = GetRequirements(ref text);
+
+                _requirements = _requirements.Replace("\"", "\\\"");
+
+                RTConsole.Write("Requirements have been successfully parsed.", Color.Green);
             }
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+
+            try
+            {
+                _additionalOptions = GetAdditional_Options(ref text);
+
+                _additionalOptions = _additionalOptions.Replace("\"", "\\\"");
+
+                RTConsole.Write("Additional Options have been successfully parsed.", Color.Green);
+            }
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+
+            try
+            {
+                string _boostingMethods = GetBoosting_Methods(ref text);
+
+                _boostingMethods = _boostingMethods.Replace("\"", "\\\"");
+
+                boostingMethods = boostingMethod_Parse(_boostingMethods);
+
+                RTConsole.Write("Boosting Methods have been successfully parsed.", Color.Green);
+            }
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+
+            try
+            {
+                var about = GetAbout(ref text);
+
+                _aboutTitle = about.Item1.Replace("\"", "\\\"");
+                _aboutText = about.Item2.Replace("\"", "\\\"");
+
+                RTConsole.Write("About have been successfully parsed.", Color.Green);
+            }
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+
+            try
+            {
+                string _faqs = GetFAQs(ref text);
+
+                _faqs = _faqs.Replace("\"", "\\\"");
+
+                faqs = FAQs_Parse(_faqs);
+
+                RTConsole.Write("FAQs have been successfully parsed.", Color.Green);
+            }
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+
+            RTConsole.Write("Footer parse is complete.\n");
+
+            return true;
         }
         private string ParseHtml(HtmlNode node)
         {
@@ -125,11 +167,71 @@ namespace LevelPupper__Parser.dlls
 
             return result.ToString();
         }
-        private Dictionary<string, string> FAQs_Parse(string? html)
+        private string GetRequirements(ref string input)
         {
-            if (html is null)
-                throw new Exception("Input in null");
+            if (!Regex.IsMatch(input, @"<h2>Requirements<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+                throw new Exception("Requirements was not found. Check the name or structure if this a mistake. Block is ignored.");
 
+            return Regex.Match(input, @"<h2>Requirements<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups[1].Value;
+        }
+        private string GetAdditional_Options(ref string input)
+        {
+            if (!Regex.IsMatch(input, @"<h2>Additional Options<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+                throw new Exception("Additional Options was not found. Check the name or structure if this a mistake. Block is ignored.");
+
+            return Regex.Match(input, @"<h2>Additional Options<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups[1].Value;
+        }
+        private string GetBoosting_Methods(ref string input)
+        {
+            if (!Regex.IsMatch(input, @"<h[23]>Boosting Method[s]?<\/h[23]>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+                throw new Exception("Boosting Methods was not found. Check the name or structure if this a mistake. Block is ignored.");
+
+            return Regex.Match(input, @"<h[23]>Boosting Method[s]?<\/h[23]>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups[1].Value;
+        }
+        private Tuple<string, string> GetAbout(ref string input)
+        {
+            if (!Regex.IsMatch(input, @"<h2>About .*?<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+                throw new Exception("About was not found. Check the name or structure if this a mistake. Block is ignored.");
+
+            var about = Regex.Matches(input, @"<h2>(About .*?)<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            return new Tuple<string, string>(about[0].Groups[1].Value.Trim(), about[0].Groups[2].Value.Trim());
+        }
+        private string GetFAQs(ref string input)
+        {
+            if (!Regex.IsMatch(input, @"<h2>FAQ[s]?<\/h2>(.*?)$", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+            {
+                throw new Exception("FAQs was not found. Check the name or structure if this a mistake. Block is ignored.");
+            }
+
+            return Regex.Match(input, @"<h2>FAQ[s]?<\/h2>(.*?)$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups[1].Value;
+        }
+        private Dictionary<string, string> boostingMethod_Parse(string html)
+        {
+            html = Regex.Replace(html, @"<(\/?)strong>", string.Empty);
+
+            Regex regex = new Regex(@"<li>(.*?)<\/li>", RegexOptions.Singleline);
+            MatchCollection matches = regex.Matches(html);
+
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            foreach (Match match in matches)
+            {
+                string line = match.Groups[1].Value.Trim();
+                string[] parts = line.Split(new[] { ':', '–' }, 2);
+
+                if (parts.Length == 2)
+                {
+                    string key = parts[0].Trim();
+                    string value = parts[1].Trim();
+                    result[key] = value;
+                }
+            }
+
+            return result;
+        }
+        private Dictionary<string, string> FAQs_Parse(string html)
+        {
             html = Regex.Replace(html, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase);
             html = Regex.Replace(html, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
 
@@ -151,67 +253,6 @@ namespace LevelPupper__Parser.dlls
 
             return result;
         }
-        private Dictionary<string, string> boostingMethod_Parse(string? html)
-        {
-            if (html is null)
-                throw new Exception("Input string is null");
-
-            html = Regex.Replace(html, @"<(\/?)strong>", string.Empty);
-
-            Regex regex = new Regex(@"<li>(.*?)<\/li>", RegexOptions.Singleline);
-            MatchCollection matches = regex.Matches(html);
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
-
-            foreach (Match match in matches)
-            {
-                string line = match.Groups[1].Value.Trim();
-                string[] parts = line.Split(new[] { ':', '–' }, 2); // Split by the first colon
-
-                if (parts.Length == 2)
-                {
-                    string key = parts[0].Trim();
-                    string value = parts[1].Trim();
-                    result[key] = value;
-                }
-            }
-
-            return result;
-        }
-        private Dictionary<string, string> ParseHtmlBlocks(string input)
-        {
-            var predefinedKeys = new List<string> { "Requirements", "Additional Options", "Boosting Method" };
-            var blocks = new Dictionary<string, string>();
-
-            string pattern = @"<h2>(?<title>.*?)<\/h2>(?<content>.*?)(?=<h2>|$)";
-            var matches = Regex.Matches(input, pattern, RegexOptions.Singleline);
-
-            int keyIndex = 0;
-
-            foreach (Match match in matches)
-            {
-                if (keyIndex == 3)
-                {
-                    blocks[match.Groups["title"].Value] = Regex.Replace(match.Groups["content"].Value.Trim(), @"\[link\!\]", string.Empty); 
-                    keyIndex++;
-                    continue;
-                }
-                else if (keyIndex == 4)
-                {
-                    blocks["FAQs"] = match.Groups["content"].Value.Trim();
-                    break;
-                }
-
-                string key = predefinedKeys[keyIndex];
-                string content = match.Groups["content"].Value.Trim();
-                blocks[key] = content;
-
-                keyIndex++;
-            }
-
-            return blocks;
-        }
-
         public void Dispose()
         {
             _requirements = string.Empty;
@@ -219,9 +260,6 @@ namespace LevelPupper__Parser.dlls
 
             _aboutTitle = string.Empty;
             _aboutText = string.Empty;
-
-            items?.Clear();
-            items = null;
 
             boostingMethods?.Clear();
             boostingMethods = null;

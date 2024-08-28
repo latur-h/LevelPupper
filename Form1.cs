@@ -26,9 +26,7 @@ namespace LevelPupper__Parser
             try
             {
                 if (m.Msg == Parser.WM_CLIPBOARDUPDATE)
-                {
                     parser?.Parse();
-                }
             }
             catch { }
             finally { }
@@ -36,14 +34,11 @@ namespace LevelPupper__Parser
             base.WndProc(ref m);
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-
         private void Form1_Load(object sender, EventArgs e)
         {
             parser = new(this, Handle);
-            //AllocConsole();
+
+            RTConsole.Init(ref rtConsole);
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -67,7 +62,7 @@ namespace LevelPupper__Parser
             }
             catch (Exception ex) 
             { 
-                MessageBox.Show(ex.Message); 
+                RTConsole.Write(ex.Message); 
             }
             finally 
             {

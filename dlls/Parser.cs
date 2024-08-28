@@ -66,14 +66,18 @@ namespace LevelPupper__Parser.dlls
 
                     currentText = rewards;
                 }
-                else if (Regex.IsMatch(text, @"Description") && Regex.IsMatch(text, @"Title") && Regex.IsMatch(text, @"URL"))
+                else if (Regex.IsMatch(text, @"javascript\:"))
+                {
+                    return;
+                }
+                else if (Regex.IsMatch(text, @"Description.*Title.*URL", RegexOptions.Singleline | RegexOptions.IgnoreCase))
                 {
                     currentText = HeaderJS();
                 }
-                else if (Regex.IsMatch(text, @"Requirements") && Regex.IsMatch(text, @"\bAdditional Options\b") && (Regex.IsMatch(text, @"\bBoosting Method\b") || Regex.IsMatch(text, @"\bBoosting Methods\b")) && Regex.IsMatch(text, @"FAQ"))
+                else if (!Regex.IsMatch(text, @"(<h2>Requirements<\/h2>)|(<h2>Additional Options<\/h2>)|(<h[23]>Boosting Method[s]?<\/h[23]>)|(<h2>FAQ[s]?<\/h2>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
                 {
                     currentText = FooterJS();
-                }
+                }                
                 else
                 {
                     GC.Collect();
@@ -88,9 +92,9 @@ namespace LevelPupper__Parser.dlls
 
                 _form.Invoke(() => Clipboard.SetText(currentText, TextDataFormat.UnicodeText));
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show(ex.ToString());
+                //RTConsole.Write(ex.ToString());
             }
             finally
             {

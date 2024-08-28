@@ -30,7 +30,7 @@ namespace LevelPupper__Parser.dlls
             {
                 case Script.General:
                     if (header is null)
-                        throw new Exception();
+                        throw new Exception("Header is null there.");
 
                     using (StreamReader reader = new(pathToGeneralJS, Encoding.Default))
                     {
@@ -49,17 +49,26 @@ namespace LevelPupper__Parser.dlls
                     }
                 case Script.Description:
                     if (footer is null)
-                        throw new Exception();
+                        throw new Exception("Footer is null there");
 
                     using (StreamReader reader = new(pathToDescriptionJS, Encoding.Default))
                     {
                         string js = reader.ReadToEnd();
 
                         js = Regex.Replace(js, @"{&aboutTitle&}", footer._aboutTitle is null ? string.Empty : footer._aboutTitle);
-                        js = Regex.Replace(js, @"{&boostingMethod&}", footer.boostingMethods?.Count.ToString() is null ? string.Empty : footer.boostingMethods.Count.ToString());
+                        js = Regex.Replace(js, @"{&boostingMethod&}", footer.boostingMethods is null ? "0" : footer.boostingMethods.Count.ToString());
                         js = Regex.Replace(js, @"{&requirements&}", footer._requirements is null ? string.Empty : footer._requirements);
                         js = Regex.Replace(js, @"{&additionalOptions&}", footer._additionalOptions is null ? string.Empty : footer._additionalOptions);
                         js = Regex.Replace(js, @"{&aboutText&}", footer._aboutText is null ? string.Empty : footer._aboutText);
+
+                        if (footer._aboutTitle is null && footer._aboutText is null)
+                        {
+                            js += $"document.getElementById(\"id_description_elements-13-show_title\").checked = false;\n";
+                            js += $"document.getElementById(\"id_description_elements-14-show_title\").checked = false;\n";
+
+                            js += $"changeSelectElement(\"id_description_elements-13-type\", \"0\");\n";
+                            js += $"changeSelectElement(\"id_description_elements-14-type\", \"0\");\n";
+                        }
 
                         int count = 1;
                         foreach (var i in footer.boostingMethods is null ? new Dictionary<string, string>() : footer.boostingMethods)

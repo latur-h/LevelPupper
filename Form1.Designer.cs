@@ -29,23 +29,38 @@
         private void InitializeComponent()
         {
             button_Category = new Button();
+            rtConsole = new RichTextBox();
             SuspendLayout();
             // 
             // button_Category
             // 
-            button_Category.Location = new Point(216, 87);
+            button_Category.Location = new Point(899, 12);
             button_Category.Name = "button_Category";
-            button_Category.Size = new Size(193, 71);
+            button_Category.Size = new Size(143, 35);
             button_Category.TabIndex = 0;
             button_Category.Text = "Format the Category";
             button_Category.UseVisualStyleBackColor = true;
             button_Category.Click += button_Category_Click;
             // 
+            // rtConsole
+            // 
+            rtConsole.BackColor = Color.Black;
+            rtConsole.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rtConsole.ForeColor = Color.LightGray;
+            rtConsole.Location = new Point(12, 12);
+            rtConsole.Name = "rtConsole";
+            rtConsole.ReadOnly = true;
+            rtConsole.Size = new Size(881, 534);
+            rtConsole.TabIndex = 1;
+            rtConsole.Text = "";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(644, 285);
+            BackColor = Color.Silver;
+            ClientSize = new Size(1054, 558);
+            Controls.Add(rtConsole);
             Controls.Add(button_Category);
             Name = "Form1";
             Text = "Form1";
@@ -57,5 +72,6 @@
         #endregion
 
         public Button button_Category;
+        public RichTextBox rtConsole;
     }
 }

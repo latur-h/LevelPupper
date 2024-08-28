@@ -49,20 +49,32 @@ namespace LevelPupper__Parser.dlls
         {
             try
             {
+                RTConsole.Write("Start header parsing...");
+
                 _preview = GetPreview(_fisrtBlock);
+                _preview = _preview.Replace("\"", "\\\"");
+
                 _utp = GetUTP(_fisrtBlock);
+                _utp = _utp.Replace("\"", "\\\"");
+                _utp = Regex.Replace(_utp, @"(УТП[12345] ?)", string.Empty);
 
                 GetSEO(doc);
 
                 _title = GetTitle(_secondBlock);
-                _description = GetDescription(_secondBlock);
-                _rewards = GetRewards(doc);
+                _title = _title.Replace("\"", "\\\"");
 
-                MessageBox.Show("Header is match!");
+                _description = GetDescription(_secondBlock);
+                _description = _description.Replace("\"", "\\\"");
+
+                _rewards = GetRewards(doc);
+                _rewards = _rewards.Replace("\"", "\\\"");
+
+                RTConsole.Write("Succeccfully parsed all blocks.", Color.Green);
+                RTConsole.Write("Header parse is complete.\n");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                RTConsole.Write(ex.Message + "\n", Color.Red);
 
                 Dispose();
             }
@@ -85,10 +97,13 @@ namespace LevelPupper__Parser.dlls
             }
 
             _seoDescription = HttpUtility.HtmlDecode(Regex.Replace(dict.ElementAt(0).Value, @"\&nbsp\;", string.Empty));
-            _seoTitle = HttpUtility.HtmlDecode(Regex.Replace(dict.ElementAt(1).Value, @"\&nbsp\;", string.Empty));
-            _seoURL = HttpUtility.HtmlDecode(Regex.Replace(dict.ElementAt(2).Value.Split('/').Where(x => x.Length > 0).Last(), @"\&nbsp\;", string.Empty));
+            _seoDescription = _seoDescription.Replace("\"", "\\\"");
 
-            Console.WriteLine(_seoDescription);
+            _seoTitle = HttpUtility.HtmlDecode(Regex.Replace(dict.ElementAt(1).Value, @"\&nbsp\;", string.Empty));
+            _seoTitle = _seoTitle.Replace("\"", "\\\"");
+
+            _seoURL = HttpUtility.HtmlDecode(Regex.Replace(dict.ElementAt(2).Value.Split('/').Where(x => x.Length > 0).Last(), @"\&nbsp\;", string.Empty));
+            _seoURL = _seoURL.Replace("\"", "\\\"");
         }
         private string _parseHtml(HtmlNode node)
         {
@@ -129,9 +144,9 @@ namespace LevelPupper__Parser.dlls
                     Regex.Replace(
                         Regex.Matches(input, @"<h1>(.*?)<\/h1>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
+                RTConsole.Write("Preview was not found, check the structure if this a mistake. Block is ignored.", Color.Red);
 
                 return string.Empty;
             }
