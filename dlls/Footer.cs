@@ -52,6 +52,7 @@ namespace LevelPupper__Parser.dlls
                 _requirements = GetRequirements(ref text);
 
                 _requirements = _requirements.Replace("\"", "\\\"");
+                _requirements = Regex.Replace(_requirements, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
                 RTConsole.Write("Requirements have been successfully parsed.", Color.Green);
             }
@@ -62,6 +63,7 @@ namespace LevelPupper__Parser.dlls
                 _additionalOptions = GetAdditional_Options(ref text);
 
                 _additionalOptions = _additionalOptions.Replace("\"", "\\\"");
+                _additionalOptions = Regex.Replace(_additionalOptions, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
                 RTConsole.Write("Additional Options have been successfully parsed.", Color.Green);
             }
@@ -72,6 +74,7 @@ namespace LevelPupper__Parser.dlls
                 string _boostingMethods = GetBoosting_Methods(ref text);
 
                 _boostingMethods = _boostingMethods.Replace("\"", "\\\"");
+                _boostingMethods = Regex.Replace(_boostingMethods, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
                 boostingMethods = boostingMethod_Parse(_boostingMethods);
 
@@ -85,6 +88,9 @@ namespace LevelPupper__Parser.dlls
 
                 _aboutTitle = about.Item1.Replace("\"", "\\\"");
                 _aboutText = about.Item2.Replace("\"", "\\\"");
+
+                _aboutTitle = Regex.Replace(_aboutTitle, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                _aboutText = Regex.Replace(_aboutText, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
                 RTConsole.Write("About have been successfully parsed.", Color.Green);
             }
@@ -232,10 +238,10 @@ namespace LevelPupper__Parser.dlls
         }
         private Dictionary<string, string> FAQs_Parse(string html)
         {
-            html = Regex.Replace(html, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase);
-            html = Regex.Replace(html, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
+            html = Regex.Replace(html, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            html = Regex.Replace(html, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-            Regex regex = new Regex(@"<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>", RegexOptions.Singleline);
+            Regex regex = new Regex(@"<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
             MatchCollection matches = regex.Matches(html);
 
             Dictionary<string, string> result = new Dictionary<string, string>();

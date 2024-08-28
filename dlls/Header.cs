@@ -65,6 +65,7 @@ namespace LevelPupper__Parser.dlls
 
                 _description = GetDescription(_secondBlock);
                 _description = _description.Replace("\"", "\\\"");
+                _description = Regex.Replace(_description, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
                 _rewards = GetRewards(doc);
                 _rewards = _rewards.Replace("\"", "\\\"");
