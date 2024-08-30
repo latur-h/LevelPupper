@@ -75,7 +75,7 @@ namespace LevelPupper__Parser.dlls
                 else if (!Regex.IsMatch(text, @"(<h2>Requirements<\/h2>)|(<h2>Additional Options<\/h2>)|(<h[23]>Boosting Method[s]?<\/h[23]>)|(<h2>FAQ[s]?<\/h2>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
                 {
                     currentText = FooterJS();
-                }                
+                }
                 else
                 {
                     GC.Collect();
