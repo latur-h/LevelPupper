@@ -35,7 +35,7 @@ namespace LevelPupper__Parser.dlls
             _form = form;
             _handle = handle;
 
-            builder = new(Path.Combine("js", "general.j"), Path.Combine(@"js", "descriptions elements.js"));
+            builder = new(Path.Combine("js", "general.js"), Path.Combine(@"js", "descriptions elements.js"));
 
             Init();
         }
