@@ -12,7 +12,7 @@ namespace LevelPupper__Parser.dlls
 {
     internal class Parser : IDisposable
     {
-        private readonly Form _form;
+        private readonly Form1 _form;
         private readonly IntPtr _handle;
 
         private readonly JavaScriptBuilder builder;
@@ -30,7 +30,7 @@ namespace LevelPupper__Parser.dlls
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
 
-        public Parser(Form form, IntPtr handle)
+        public Parser(Form1 form, IntPtr handle)
         {
             _form = form;
             _handle = handle;
@@ -68,11 +68,11 @@ namespace LevelPupper__Parser.dlls
                 {
                     return;
                 }
-                else if (Regex.IsMatch(text, @"Description.*Title.*URL", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+                else if (RegularExp.isHeader().IsMatch(text))
                 {
                     currentText = HeaderJS();
                 }
-                else if (!Regex.IsMatch(text, @"(<h2>Requirements<\/h2>)|(<h2>Additional Options<\/h2>)|(<h[23]>Boosting Method[s]?<\/h[23]>)|(<h2>FAQ[s]?<\/h2>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+                else if (!RegularExp.isFooter().IsMatch(text))
                 {
                     currentText = FooterJS();
                 }
@@ -104,14 +104,14 @@ namespace LevelPupper__Parser.dlls
             string html = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
 
             using (Header header = new(html))            
-                return builder.Build(JavaScriptBuilder.Script.General, header);            
+                return builder.Build(JavaScriptBuilder.Script.General, header: header);
         }
         private string FooterJS()
         {
             string html = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
-
-            using (Footer footer = new(html))
-                return builder.Build(JavaScriptBuilder.Script.Description, null, footer);
+            
+            using (Footer footer = new(html, addtionalOptions_Feature: _form.cb_AdditionalOptions.Checked))
+                return builder.Build(JavaScriptBuilder.Script.Description, footer: footer);
         }
         public void Dispose() => RemoveClipboardFormatListener(_handle);
     }

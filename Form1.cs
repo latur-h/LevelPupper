@@ -39,6 +39,10 @@ namespace LevelPupper__Parser
             parser = new(this, Handle);
 
             RTConsole.Init(ref rtConsole);
+            try
+            {
+                RTConsole.Write($"Current version: {File.ReadAllText(@"../../../version.txt")}\n");
+            } catch { RTConsole.Write("Version control file is not found. This message can be ignored.", Color.Red); }
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -64,7 +68,7 @@ namespace LevelPupper__Parser
             { 
                 RTConsole.Write(ex.Message); 
             }
-            finally 
+            finally
             {
                 GC.Collect(); 
             }

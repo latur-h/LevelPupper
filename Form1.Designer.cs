@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             button_Category = new Button();
             rtConsole = new RichTextBox();
+            cb_AdditionalOptions = new CheckBox();
             SuspendLayout();
             // 
             // button_Category
@@ -55,12 +56,23 @@
             rtConsole.TabIndex = 1;
             rtConsole.Text = "";
             // 
+            // cb_AdditionalOptions
+            // 
+            cb_AdditionalOptions.AutoSize = true;
+            cb_AdditionalOptions.Location = new Point(899, 110);
+            cb_AdditionalOptions.Name = "cb_AdditionalOptions";
+            cb_AdditionalOptions.Size = new Size(126, 19);
+            cb_AdditionalOptions.TabIndex = 2;
+            cb_AdditionalOptions.Text = "Additional Options";
+            cb_AdditionalOptions.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Silver;
             ClientSize = new Size(1054, 558);
+            Controls.Add(cb_AdditionalOptions);
             Controls.Add(rtConsole);
             Controls.Add(button_Category);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -71,11 +83,13 @@
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         public Button button_Category;
         public RichTextBox rtConsole;
+        public CheckBox cb_AdditionalOptions;
     }
 }

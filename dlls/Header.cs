@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace LevelPupper__Parser.dlls
 {
@@ -26,99 +25,226 @@ namespace LevelPupper__Parser.dlls
         public string? _rewards;
 
         private readonly HtmlAgilityPack.HtmlDocument doc;
-        private readonly string _fisrtBlock;
-        private readonly string _secondBlock;
+
         public Header(string html)
         {
-            html = Regex.Replace(html, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
-
             HtmlAgilityPack.HtmlDocument doc = new();
             doc.LoadHtml(html);
 
             this.doc = doc;
-
-            var split = Regex.Split(_parseHtml(doc.DocumentNode), @"<td>.*?<\/td>").Where(x => x.Length > 0).ToArray();
-
-            _fisrtBlock = split[0];
-            _secondBlock = split[1];
 
             Init();
         }
 
         private void Init()
         {
+            string? text = ParseHtml(doc.DocumentNode);
+
+            _cleaner(ref text);
+
+            RemoveSEO(ref text);
+
+            RTConsole.Write("Start header parsing...");
+
             try
             {
-                RTConsole.Write("Start header parsing...");
+                var seo = GetSEO(doc);
 
-                _preview = GetPreview(_fisrtBlock);
-                _preview = _preview.Replace("\"", "\\\"");
+                _seoDescription = seo.Item1;
+                _seoTitle = seo.Item2;
+                _seoURL = seo.Item3;
 
-                _utp = GetUTP(_fisrtBlock);
-                _utp = _utp.Replace("\"", "\\\"");
-                _utp = Regex.Replace(_utp, @"(УТП[12345] ?)", string.Empty);
-
-                GetSEO(doc);
-
-                _title = GetTitle(_secondBlock);
-                _title = _title.Replace("\"", "\\\"");
-
-                _description = GetDescription(_secondBlock);
-                _description = _description.Replace("\"", "\\\"");
-                _description = Regex.Replace(_description, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-                _rewards = GetRewards(doc);
-                _rewards = _rewards.Replace("\"", "\\\"");
-
-                RTConsole.Write("Succeccfully parsed all blocks.", Color.Green);
-                RTConsole.Write("Header parse is complete.\n");
+                RTConsole.Write("Seo have been succecfully parsed.", Color.Green);
             }
-            catch (Exception ex)
-            {
-                RTConsole.Write(ex.Message + "\n", Color.Red);
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
 
-                Dispose();
+            try
+            {
+                _rewards = GetRewards(ref text);
+
+                RemoveRewards(ref text);
+
+                RTConsole.Write("Rewards have been succecfully parsed.", Color.Green);
+            }
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+
+            try
+            {
+                var title = GetTitle(ref text);
+
+                _title = title.Item1;
+                _preview = title.Item2;
+
+                if (!string.IsNullOrEmpty(_title))
+                    RTConsole.Write("Title have been succecfully parsed.", Color.Green);
+
+                if (!string.IsNullOrEmpty(_preview))
+                    RTConsole.Write("Preview have been succecfully parsed.", Color.Green);
+            }
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+
+            try
+            {
+                var descriptions = GetDescription(ref text);
+
+                _description = descriptions.Item1;
+                _utp = descriptions.Item2;
+
+                if(!string.IsNullOrEmpty(_utp))
+                    RTConsole.Write("UTP have been succecfully parsed.", Color.Green);
+
+                if (!string.IsNullOrEmpty(_description))
+                    RTConsole.Write("Description have been succecfully parsed.", Color.Green);
+            }
+            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+
+            RTConsole.Write("Header parse is complete.\n");
+
+            static void _cleaner(ref string? input)
+            {
+                if (string.IsNullOrEmpty(input))
+                    return;
+
+                input = HttpUtility.HtmlDecode(input);
+
+                if (RegularExp.isFooter().IsMatch(input))
+                {
+                    input = RegularExp.GetUnnecessaryFooter().Replace(input, string.Empty);
+
+                    RTConsole.Write(@"Footer detected! Removed due the rules for headers.", Color.Red);
+                }
+                input = RegularExp.GetUnnecessaryElements().Replace(input, string.Empty);
+                input = RegularExp.GetUnnecessarySpaces().Replace(input, " ");
+                input = input.Replace("\"", "\\\"");
             }
         }
-        private void GetSEO(HtmlAgilityPack.HtmlDocument doc)
+        
+        private Tuple<string?, string?> GetTitle(ref string? input)
+        {
+            if (string.IsNullOrEmpty(input)) 
+                throw new Exception("Title was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+
+            MatchCollection titles = RegularExp.GetTitle().Matches(input);
+            
+            if (titles.Count > 2 || titles.Count < 1)
+                throw new Exception("Title was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+
+            if (titles.Count == 2)
+            {
+                string preview = titles[0].Groups[1].Value.Length <= titles[1].Groups[1].Value.Length ? titles[0].Groups[1].Value : titles[1].Groups[1].Value;
+                string title = titles[0].Groups[1].Value.Length >= titles[1].Groups[1].Value.Length ? titles[0].Groups[1].Value : titles[1].Groups[1].Value;
+
+                return new Tuple<string?, string?>(title, preview);
+            }
+            else
+            {
+                RTConsole.Write("Preview was not found. Check the structure or formatting settings if this a mistake. Block is ignored.", Color.Red);
+
+                return new Tuple<string?, string?>(titles[0].Groups[1].Value, null);
+            }
+        }
+        private Tuple<string?, string?> GetDescription(ref string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+                throw new Exception("Descriptions was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+
+            MatchCollection descriptions = RegularExp.GetDescription().Matches(input);
+
+            if (descriptions.Count < 1)
+                throw new Exception("Descriptions was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+
+            StringBuilder utp = new();
+
+            var utps = descriptions.Where(x => x.Groups[1].Value.Split(' ').Length <= 5).ToArray();
+
+            if (utps is not null && utps.Length != 0)
+            {
+                utp.Append(@"<ul>");
+                foreach (var i in utps)
+                    utp.Append($"<li>{i.Groups[1].Value}</li>");
+                utp.Append(@"</ul>");
+            }
+            else
+                RTConsole.Write("UTP was not found. Check the structure or formatting settings if this a mistake. Block is ignored.", Color.Red);
+
+            var _descriptions = descriptions.Where(x => x.Groups[1].Value.Split(' ').Length > 5).ToArray();
+
+            StringBuilder description = new();
+
+            if (_descriptions is not null && _descriptions.Length != 0)
+            {
+                foreach (var i in _descriptions)
+                    description.Append($"<p>{i.Groups[1].Value}</p>");
+            }
+            else
+                RTConsole.Write("Description was not found. Check the structure or formatting settings if this a mistake. Block is ignored.", Color.Red);
+
+            return new Tuple<string?, string?>(description.ToString(), utp.ToString());
+        }
+        private string? GetRewards(ref string? input)
+        {
+            if (string.IsNullOrEmpty(input)) return null;
+
+            MatchCollection rewards = RegularExp.GetRewards().Matches(input);
+
+            if (rewards.Count < 1)
+                throw new Exception("Rewards was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+
+            StringBuilder _rewards = new();
+
+            foreach (Match match in rewards)
+                foreach (Capture capture in match.Groups[1].Captures)
+                    _rewards.Append($"<div><h3>{capture.Value}</h3></div>");
+
+            return _rewards.ToString();
+        }
+        private void RemoveRewards(ref string? input)
+        {
+            if (string.IsNullOrEmpty(input)) return;
+
+            input = RegularExp.GetRewards().Replace(input, string.Empty);
+        }
+        private Tuple<string, string, string> GetSEO(HtmlAgilityPack.HtmlDocument doc)
         {
             var rows = doc.DocumentNode.SelectNodes("//div//table//tr");
 
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            List<string> seoTable = new();
 
             foreach (var row in rows)
             {
-                var columns = row.SelectNodes("td");
-                if (columns != null && columns.Count == 2)
-                {
-                    string key = columns[0].InnerText.Trim();
-                    string value = columns[1].InnerText.Trim();
-                    dict[key] = value;
-                }
+                HtmlNodeCollection columns = row.SelectNodes("td");
+
+                if (columns is not null && columns.Count == 2)
+                    seoTable.Add(_cleaner(columns[1].InnerText.Trim()));
             }
 
-            _seoDescription = HttpUtility.HtmlDecode(Regex.Replace(dict.ElementAt(0).Value, @"\&nbsp\;", string.Empty));
-            _seoDescription = _seoDescription.Replace("\"", "\\\"");
+            return new Tuple<string, string, string>(seoTable[0], seoTable[1], seoTable[2].Split('/').Where(x => x.Length > 0).Last());
 
-            _seoTitle = HttpUtility.HtmlDecode(Regex.Replace(dict.ElementAt(1).Value, @"\&nbsp\;", string.Empty));
-            _seoTitle = _seoTitle.Replace("\"", "\\\"");
+            string _cleaner(string? input)
+            {
+                input = HttpUtility.HtmlDecode(input);
+                input = input?.Replace("\"", "\\\"");
+                input = Regex.Replace(input is null ? string.Empty : input, @"\s*$", string.Empty);
 
-            _seoURL = HttpUtility.HtmlDecode(Regex.Replace(dict.ElementAt(2).Value.Split('/').Where(x => x.Length > 0).Last(), @"\&nbsp\;", string.Empty));
-            _seoURL = _seoURL.Replace("\"", "\\\"");
+                return input;
+            }
         }
-        private string _parseHtml(HtmlNode node)
+        private void RemoveSEO(ref string? input)
+        {
+            if (string.IsNullOrEmpty(input)) return;
+
+            input = Regex.Replace(input, @"<td>.*<\/td>", string.Empty); 
+        }
+        private string ParseHtml(HtmlNode node)
         {
             StringBuilder result = new StringBuilder();
 
             foreach (var child in node.ChildNodes)
             {
                 if (child.NodeType == HtmlNodeType.Text)
-                {
                     result.Append(child.InnerText);
-                }
 
                 if (child.NodeType == HtmlNodeType.Element)
-                {
                     switch (child.Name)
                     {
                         case "h1":
@@ -126,57 +252,16 @@ namespace LevelPupper__Parser.dlls
                         case "td":
                         case "p":
                             result.Append($"<{child.Name}>");
-                            result.Append(_parseHtml(child));
+                            result.Append(ParseHtml(child));
                             result.Append($"</{child.Name}>");
                             break;
                         default:
-                            result.Append(_parseHtml(child));
+                            result.Append(ParseHtml(child));
                             break;
                     }
-                }
             }
+
             return result.ToString();
-        }
-        private string GetPreview(string input)
-        {
-            try
-            {
-                return HttpUtility.HtmlDecode(
-                    Regex.Replace(
-                        Regex.Matches(input, @"<h1>(.*?)<\/h1>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));
-            }
-            catch
-            {
-                RTConsole.Write("Preview was not found, check the structure if this a mistake. Block is ignored.", Color.Red);
-
-                return string.Empty;
-            }
-        }
-        private string GetUTP(string input)
-        {
-            var matches = Regex.Matches(input, @"<p>(.*?)<\/p>");
-
-            StringBuilder utp = new();
-
-            utp.Append(@"<ul>");
-            foreach (var match in matches)
-                utp.Append($"<li>{(match as Match)?.Groups[1].Value}</li>");
-            utp.Append(@"</ul>");
-
-            return HttpUtility.HtmlDecode(Regex.Replace(utp.ToString(), @"\&nbsp\;", string.Empty));
-        }
-        private string GetTitle(string input) => HttpUtility.HtmlDecode(Regex.Replace(Regex.Matches(input, @"<h1>(.*?)<\/h1>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));
-        private string GetDescription(string input) => HttpUtility.HtmlDecode(Regex.Replace(Regex.Matches(input, @"<\/h1>(.*?)<h2>")[0].Groups[1].Value, @"\&nbsp\;", string.Empty));
-        private string GetRewards(HtmlAgilityPack.HtmlDocument doc)
-        {
-            var split = Regex.Split(Regex.Replace(_parseHtml(doc.DocumentNode), @"\&nbsp\;", string.Empty), @"<h2>.*?</h2>").Where(x => x.Length > 0).ToArray();
-
-            StringBuilder rewards = new();
-
-            foreach (var i in Regex.Matches(split[1], @"<p>(.*?)<\/p>"))
-                rewards.Append($"<div><h3>{(i as Match)?.Groups[1].Value}</h3></div>");
-
-            return HttpUtility.HtmlDecode(rewards.ToString());
         }
 
         public void Dispose()

@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace LevelPupper__Parser.dlls
 {
@@ -23,10 +24,14 @@ namespace LevelPupper__Parser.dlls
 
         private readonly HtmlAgilityPack.HtmlDocument doc;
 
-        public Footer(string html) 
+        private readonly bool AdditionalOptions_Feature;
+
+        public Footer(string html, bool addtionalOptions_Feature = false)
         {
             HtmlAgilityPack.HtmlDocument doc = new();
             doc.LoadHtml(html);
+
+            AdditionalOptions_Feature = addtionalOptions_Feature;
 
             this.doc = doc;
 
@@ -34,14 +39,16 @@ namespace LevelPupper__Parser.dlls
         }
         private bool Init()
         {
-            string text = ParseHtml(doc.DocumentNode);
+            string? text = ParseHtml(doc.DocumentNode);
 
-            text = Regex.Replace(text, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase);
+            if (string.IsNullOrEmpty(text)) return false;
+
+            _cleaner(ref text);
 
             try
             {
-                if (!Regex.IsMatch(text, @"(<h2>Requirements<\/h2>)|(<h2>Additional Options<\/h2>)|(<h[23]>Boosting Method[s]?<\/h[23]>)|(<h2>FAQ[s]?<\/h2>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))                
-                    throw new Exception("Incorrect tags!");
+                if (!RegularExp.isFooter().IsMatch(text is not null ? text : throw new Exception("Invalid text.")))
+                    throw new Exception("Incorrect tags.");
             }
             catch (Exception e) { RTConsole.Write(e.Message + "\n", Color.Red); return false; }
 
@@ -51,19 +58,16 @@ namespace LevelPupper__Parser.dlls
             {
                 _requirements = GetRequirements(ref text);
 
-                _requirements = _requirements.Replace("\"", "\\\"");
-                _requirements = Regex.Replace(_requirements, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
                 RTConsole.Write("Requirements have been successfully parsed.", Color.Green);
             }
             catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
 
             try
             {
-                _additionalOptions = GetAdditional_Options(ref text);
-
-                _additionalOptions = _additionalOptions.Replace("\"", "\\\"");
-                _additionalOptions = Regex.Replace(_additionalOptions, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                if (AdditionalOptions_Feature)
+                    _additionalOptions = GetAdditional_Options_Feature(ref text);
+                else
+                    _additionalOptions = GetAdditional_Options(ref text);
 
                 RTConsole.Write("Additional Options have been successfully parsed.", Color.Green);
             }
@@ -71,12 +75,7 @@ namespace LevelPupper__Parser.dlls
 
             try
             {
-                string _boostingMethods = GetBoosting_Methods(ref text);
-
-                _boostingMethods = _boostingMethods.Replace("\"", "\\\"");
-                _boostingMethods = Regex.Replace(_boostingMethods, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-                boostingMethods = boostingMethod_Parse(_boostingMethods);
+                boostingMethods = GetBoosting_Methods(ref text);
 
                 RTConsole.Write("Boosting Methods have been successfully parsed.", Color.Green);
             }
@@ -86,11 +85,8 @@ namespace LevelPupper__Parser.dlls
             {
                 var about = GetAbout(ref text);
 
-                _aboutTitle = about.Item1.Replace("\"", "\\\"");
-                _aboutText = about.Item2.Replace("\"", "\\\"");
-
-                _aboutTitle = Regex.Replace(_aboutTitle, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                _aboutText = Regex.Replace(_aboutText, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                _aboutTitle = about.Item1;
+                _aboutText = about.Item2;
 
                 RTConsole.Write("About have been successfully parsed.", Color.Green);
             }
@@ -98,11 +94,7 @@ namespace LevelPupper__Parser.dlls
 
             try
             {
-                string _faqs = GetFAQs(ref text);
-
-                _faqs = _faqs.Replace("\"", "\\\"");
-
-                faqs = FAQs_Parse(_faqs);
+                faqs = GetFAQs(ref text);
 
                 RTConsole.Write("FAQs have been successfully parsed.", Color.Green);
             }
@@ -111,6 +103,16 @@ namespace LevelPupper__Parser.dlls
             RTConsole.Write("Footer parse is complete.\n");
 
             return true;
+
+            void _cleaner(ref string? input)
+            {
+                if (string.IsNullOrEmpty(input)) return;
+
+                input = HttpUtility.HtmlDecode(input);
+                input = RegularExp.GetUnnecessaryElements().Replace(input, string.Empty);
+                input = RegularExp.GetUnnecessarySpaces().Replace(input, " ");
+                input = input.Replace("\"", "\\\"");
+            }
         }
         private string ParseHtml(HtmlNode node)
         {
@@ -175,90 +177,88 @@ namespace LevelPupper__Parser.dlls
         }
         private string GetRequirements(ref string input)
         {
-            if (!Regex.IsMatch(input, @"<h2>Requirements<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+            if (!RegularExp.GetRequirements().IsMatch(input))
                 throw new Exception("Requirements was not found. Check the name or structure if this a mistake. Block is ignored.");
 
-            return Regex.Match(input, @"<h2>Requirements<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups[1].Value;
+            return RegularExp.GetRequirements().Match(input).Groups[1].Value;
         }
         private string GetAdditional_Options(ref string input)
         {
-            if (!Regex.IsMatch(input, @"<h2>Additional Options<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+            if (!RegularExp.GetAdditional_Options().IsMatch(input))
                 throw new Exception("Additional Options was not found. Check the name or structure if this a mistake. Block is ignored.");
 
-            return Regex.Match(input, @"<h2>Additional Options<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups[1].Value;
+            return RegularExp.GetAdditional_Options().Match(input).Groups[1].Value;
         }
-        private string GetBoosting_Methods(ref string input)
+        private string GetAdditional_Options_Feature(ref string input)
         {
-            if (!Regex.IsMatch(input, @"<h[23]>Boosting Method[s]?<\/h[23]>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+            if (!RegularExp.GetAdditional_Options().IsMatch(input))
+                throw new Exception("Additional Options was not found. Check the name or structure if this a mistake. Block is ignored.");
+
+            string text = RegularExp.GetAdditional_Options().Match(input).Groups[1].Value;
+
+            MatchCollection lists = RegularExp.GetAdditional_Options_Feature_List().Matches(text);
+
+            foreach(Match match in lists)            
+                text = Regex.Replace(text, match.Value, parseList(match.Value));            
+
+            return text;
+
+            string parseList(string input)
+            {
+                StringBuilder item = new();
+
+                MatchCollection items = RegularExp.GetAdditional_Options_Feature_List_Items().Matches(input);
+
+                item.Append($"<ul>");
+                foreach(Match match in items)
+                    item.Append($"<li><strong>{Regex.Replace(match.Groups[1].Value, @"<*?(?:\/?)strong>", string.Empty)}</strong>: {match.Groups[2].Value}</li");
+                item.Append($"</ul>");
+
+                return item.ToString();
+            }
+        }
+        private Dictionary<string, string> GetBoosting_Methods(ref string input)
+        {
+            if (!RegularExp.GetBoosting_Methods().IsMatch(input))
                 throw new Exception("Boosting Methods was not found. Check the name or structure if this a mistake. Block is ignored.");
 
-            return Regex.Match(input, @"<h[23]>Boosting Method[s]?<\/h[23]>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups[1].Value;
+            string text = RegularExp.GetBoosting_Methods().Match(input).Groups[1].Value;
+
+            text = Regex.Replace(text, @"<(\/?)strong>", string.Empty);
+
+            Dictionary<string, string> boostingMethods = new();
+
+            foreach (Match i in RegularExp.GetBoosting_Methods_Items().Matches(text))
+                boostingMethods.Add(i.Groups[1].Value.ToLower() != "piloted" ? "Self-Play" : i.Groups[1].Value, Regex.Replace(i.Groups[2].Value, @"\s*$", string.Empty));
+
+            return boostingMethods;
         }
         private Tuple<string, string> GetAbout(ref string input)
         {
-            if (!Regex.IsMatch(input, @"<h2>About .*?<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+            if (!RegularExp.GetAbout().IsMatch(input))
                 throw new Exception("About was not found. Check the name or structure if this a mistake. Block is ignored.");
 
-            var about = Regex.Matches(input, @"<h2>(About .*?)<\/h2>(.*?)(?=<h2>|<h3>)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var about = RegularExp.GetAbout().Matches(input);
 
             return new Tuple<string, string>(about[0].Groups[1].Value.Trim(), about[0].Groups[2].Value.Trim());
         }
-        private string GetFAQs(ref string input)
+        private Dictionary<string, string> GetFAQs(ref string input)
         {
-            if (!Regex.IsMatch(input, @"<h2>FAQ[s]?<\/h2>(.*?)$", RegexOptions.Singleline | RegexOptions.IgnoreCase))
-            {
-                throw new Exception("FAQs was not found. Check the name or structure if this a mistake. Block is ignored.");
-            }
+            if (!RegularExp.GetFAQs().IsMatch(input))
+                throw new Exception("FAQs was not found. Check the name or structure if this a mistake. Block is ignored.");            
 
-            return Regex.Match(input, @"<h2>FAQ[s]?<\/h2>(.*?)$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups[1].Value;
+            string text = RegularExp.GetFAQs().Match(input).Groups[1].Value;
+
+            text = Regex.Replace(text, @"<(\/?)strong>", string.Empty);
+
+            Dictionary<string, string> faqs = new();
+
+            foreach (Match i in RegularExp.GetFAQs_Items().Matches(text))
+                faqs.Add(i.Groups[1].Value, Regex.Replace(i.Groups[2].Value, @"\s*$", string.Empty));
+
+            return faqs;
         }
-        private Dictionary<string, string> boostingMethod_Parse(string html)
-        {
-            html = Regex.Replace(html, @"<(\/?)strong>", string.Empty);
 
-            Regex regex = new Regex(@"<li>(.*?)<\/li>", RegexOptions.Singleline);
-            MatchCollection matches = regex.Matches(html);
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
-
-            foreach (Match match in matches)
-            {
-                string line = match.Groups[1].Value.Trim();
-                string[] parts = line.Split(new[] { ':', '–' }, 2);
-
-                if (parts.Length == 2)
-                {
-                    string key = parts[0].Trim();
-                    string value = parts[1].Trim();
-                    result[key] = value;
-                }
-            }
-
-            return result;
-        }
-        private Dictionary<string, string> FAQs_Parse(string html)
-        {
-            html = Regex.Replace(html, @"\[link\!\]", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            html = Regex.Replace(html, @"H[23]\s-\s", string.Empty, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            Regex regex = new Regex(@"<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            MatchCollection matches = regex.Matches(html);
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
-
-            foreach (Match match in matches)
-            {
-                string key = match.Groups[1].Value.Trim();
-                string value = match.Groups[2].Value.Trim();
-
-                if (!result.ContainsKey(key))
-                {
-                    result[key] = value;
-                }
-            }
-
-            return result;
-        }
         public void Dispose()
         {
             _requirements = string.Empty;
