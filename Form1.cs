@@ -41,7 +41,7 @@ namespace LevelPupper__Parser
             RTConsole.Init(ref rtConsole);
             try
             {
-                RTConsole.Write($"Current version: {File.ReadAllText(@"../../../version.txt")}\n");
+                label_Version.Text = $"{File.ReadAllText(@"../../../version.txt")}";
             } catch { RTConsole.Write("Version control file is not found. This message can be ignored.", Color.Red); }
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -65,12 +65,12 @@ namespace LevelPupper__Parser
                 Invoke(() => Clipboard.SetText(text, TextDataFormat.UnicodeText));
             }
             catch (Exception ex) 
-            { 
-                RTConsole.Write(ex.Message); 
+            {
+                RTConsole.Write(ex.Message);
             }
             finally
             {
-                GC.Collect(); 
+                GC.Collect();
             }
 
             string _parseHtml(HtmlNode node)

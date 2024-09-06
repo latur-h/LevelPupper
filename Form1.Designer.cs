@@ -32,6 +32,7 @@
             button_Category = new Button();
             rtConsole = new RichTextBox();
             cb_AdditionalOptions = new CheckBox();
+            label_Version = new Label();
             SuspendLayout();
             // 
             // button_Category
@@ -66,12 +67,21 @@
             cb_AdditionalOptions.Text = "Additional Options";
             cb_AdditionalOptions.UseVisualStyleBackColor = true;
             // 
+            // label_Version
+            // 
+            label_Version.AutoSize = true;
+            label_Version.Location = new Point(1004, 534);
+            label_Version.Name = "label_Version";
+            label_Version.Size = new Size(0, 15);
+            label_Version.TabIndex = 3;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Silver;
             ClientSize = new Size(1054, 558);
+            Controls.Add(label_Version);
             Controls.Add(cb_AdditionalOptions);
             Controls.Add(rtConsole);
             Controls.Add(button_Category);
@@ -91,5 +101,6 @@
         public Button button_Category;
         public RichTextBox rtConsole;
         public CheckBox cb_AdditionalOptions;
+        public Label label_Version;
     }
 }

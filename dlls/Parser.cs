@@ -17,8 +17,6 @@ namespace LevelPupper__Parser.dlls
 
         private readonly JavaScriptBuilder builder;
 
-        private Regex _rewards = new(@"^\bRewards\b", RegexOptions.IgnoreCase);
-
         private string currentText = string.Empty;
 
         public static readonly int WM_CLIPBOARDUPDATE = 0x031D;
@@ -48,23 +46,7 @@ namespace LevelPupper__Parser.dlls
 
                 string text = _form.Invoke(() => Clipboard.GetText(TextDataFormat.UnicodeText));
 
-                if (_rewards.IsMatch(text))
-                {
-                    if (currentText == _rewards.Match(text).Value) return;
-
-                    string[] lines = text.Split(new char[] { '\r', '\n' });
-
-                    string rewards = string.Empty;
-                    foreach (var i in lines.Where(x => x.Length != 0))
-                    {
-                        if (_rewards.IsMatch(i)) continue;
-
-                        rewards += $"<div><h3>{i}</div></h3>\r\n";
-                    }
-
-                    currentText = rewards;
-                }
-                else if (Regex.IsMatch(text, @"javascript\:"))
+                if (Regex.IsMatch(text, @"javascript\:"))
                 {
                     return;
                 }
@@ -78,13 +60,11 @@ namespace LevelPupper__Parser.dlls
                 }
                 else
                 {
-                    GC.Collect();
                     return;
                 }
 
                 if (string.IsNullOrEmpty(currentText))
                 {
-                    GC.Collect();
                     return;
                 }
 
