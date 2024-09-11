@@ -59,7 +59,7 @@ namespace LevelPupper__Parser.dlls
                 {
                     currentText = HeaderJS();
                 }
-                else if (!RegularExp.isFooter().IsMatch(text))
+                else if (RegularExp.isFooter().IsMatch(text))
                 {
                     currentText = FooterJS();
                 }
