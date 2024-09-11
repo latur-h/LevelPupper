@@ -208,6 +208,8 @@ namespace LevelPupper__Parser.dlls
         {
             var rows = doc.DocumentNode.SelectNodes("//div//table//tr");
 
+            if (rows is null || rows.Count == 0) throw new Exception("SEO was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+
             List<string> seoTable = new();
 
             foreach (var row in rows)

@@ -44,7 +44,12 @@ namespace LevelPupper__Parser.dlls
             {
                 if (!_form.Invoke(() => Clipboard.ContainsText(TextDataFormat.Text))) return;
 
-                string text = _form.Invoke(() => Clipboard.GetText(TextDataFormat.UnicodeText));
+                string text = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
+
+                HtmlAgilityPack.HtmlDocument doc = new();
+                doc.LoadHtml(text);
+
+                text = ParseHtml(doc.DocumentNode);
 
                 if (Regex.IsMatch(text, @"javascript\:"))
                 {
@@ -78,6 +83,34 @@ namespace LevelPupper__Parser.dlls
             {
                 GC.Collect();
             }
+        }
+        private string ParseHtml(HtmlNode node)
+        {
+            StringBuilder result = new StringBuilder();
+
+            foreach (var child in node.ChildNodes)
+            {
+                if (child.NodeType == HtmlNodeType.Text)
+                    result.Append(child.InnerText);
+
+                if (child.NodeType == HtmlNodeType.Element)
+                    switch (child.Name)
+                    {
+                        case "h1":
+                        case "h2":
+                        case "td":
+                        case "p":
+                            result.Append($"<{child.Name}>");
+                            result.Append(ParseHtml(child));
+                            result.Append($"</{child.Name}>");
+                            break;
+                        default:
+                            result.Append(ParseHtml(child));
+                            break;
+                    }
+            }
+
+            return result.ToString();
         }
         private string HeaderJS()
         {
