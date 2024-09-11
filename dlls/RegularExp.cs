@@ -9,7 +9,7 @@ namespace LevelPupper__Parser.dlls
 {
     public partial class RegularExp
     {
-        [GeneratedRegex(@"Description.*Title.*URL", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"(?>Description.*Title.*URL)|(?><h2>Rewards</h2>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex isHeader();
         [GeneratedRegex(@"(<h2>Requirements<\/h2>)|(<h2>Additional Options<\/h2>)|(<h[23]>Boosting Method[s]?<\/h[23]>)|(<h2>(About .*?)<\/h2>)|(<h2>FAQ[s]?<\/h2>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex isFooter();
