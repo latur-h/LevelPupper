@@ -211,7 +211,7 @@ namespace LevelPupper__Parser.dlls
 
                 item.Append($"<ul>");
                 foreach(Match match in items)
-                    item.Append($"<li><strong>{Regex.Replace(match.Groups[1].Value, @"<*?(?:\/?)strong>", string.Empty)}</strong>: {match.Groups[2].Value}</li");
+                    item.Append($"<li><strong>{Regex.Replace(match.Groups[1].Value, @"<*?(?:\/?)strong>", string.Empty)}</strong>: {match.Groups[2].Value}</li>");
                 item.Append($"</ul>");
 
                 return item.ToString();

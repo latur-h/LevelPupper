@@ -155,7 +155,7 @@ namespace LevelPupper__Parser.dlls
 
             StringBuilder utp = new();
 
-            var utps = descriptions.Where(x => x.Groups[1].Value.Split(' ').Length <= 5).ToArray();
+            var utps = descriptions.Where(x => x.Groups[1].Value.Split(' ').Length <= 6).ToArray();
 
             if (utps is not null && utps.Length != 0)
             {
@@ -167,7 +167,7 @@ namespace LevelPupper__Parser.dlls
             else
                 RTConsole.Write("UTP was not found. Check the structure or formatting settings if this a mistake. Block is ignored.", Color.Red);
 
-            var _descriptions = descriptions.Where(x => x.Groups[1].Value.Split(' ').Length > 5).ToArray();
+            var _descriptions = descriptions.Where(x => x.Groups[1].Value.Split(' ').Length > 6).ToArray();
 
             StringBuilder description = new();
 

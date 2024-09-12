@@ -24,7 +24,7 @@ namespace LevelPupper__Parser.dlls
             pathToDescriptionJS = description;
         }
 
-        public string Build(Script script, Header? header = null, Footer? footer = null)
+        public string Build(Script script, Header? header = null, Footer? footer = null, bool? isHeaderPresaved = null)
         {
             switch (script)
             {
