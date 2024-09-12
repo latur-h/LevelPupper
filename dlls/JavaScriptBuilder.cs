@@ -36,14 +36,14 @@ namespace LevelPupper__Parser.dlls
                     {
                         string js = reader.ReadToEnd();
 
-                        js = Regex.Replace(js, @"{&advantages&}", header._utp is null ? string.Empty : header._utp);
-                        js = Regex.Replace(js, @"{&description&}", header._description is null ? string.Empty : header._description);
-                        js = Regex.Replace(js, @"{&reward&}", header._rewards is null ? string.Empty : header._rewards);
-                        js = Regex.Replace(js, @"{&seoDescription&}", header._seoDescription is null ? string.Empty : header._seoDescription);
-                        js = Regex.Replace(js, @"{&seoTitle&}", header._seoTitle is null ? string.Empty : header._seoTitle);
-                        js = Regex.Replace(js, @"{&title&}", header._title is null ? string.Empty : header._title);
-                        js = Regex.Replace(js, @"{&preview&}", header._preview is null ? string.Empty : header._preview);
-                        js = Regex.Replace(js, @"{&url&}", header._seoURL is null ? string.Empty : header._seoURL);
+                        js = Regex.Replace(js, @"{&advantages&}", header._utp ?? string.Empty);
+                        js = Regex.Replace(js, @"{&description&}", header._description ?? string.Empty);
+                        js = Regex.Replace(js, @"{&reward&}", header._rewards ?? string.Empty);
+                        js = Regex.Replace(js, @"{&seoDescription&}", header._seoDescription ?? string.Empty);
+                        js = Regex.Replace(js, @"{&seoTitle&}", header._seoTitle ?? string.Empty);
+                        js = Regex.Replace(js, @"{&title&}", header._title ?? string.Empty);
+                        js = Regex.Replace(js, @"{&preview&}", header._preview ?? string.Empty);
+                        js = Regex.Replace(js, @"{&url&}", header._seoURL ?? string.Empty);
 
                         return js;
                     }
@@ -55,11 +55,11 @@ namespace LevelPupper__Parser.dlls
                     {
                         string js = reader.ReadToEnd();
 
-                        js = Regex.Replace(js, @"{&aboutTitle&}", footer._aboutTitle is null ? string.Empty : footer._aboutTitle);
+                        js = Regex.Replace(js, @"{&aboutTitle&}", footer._aboutTitle ?? "About");
                         js = Regex.Replace(js, @"{&boostingMethod&}", footer.boostingMethods is null ? "0" : footer.boostingMethods.Count.ToString());
-                        js = Regex.Replace(js, @"{&requirements&}", footer._requirements is null ? string.Empty : footer._requirements);
-                        js = Regex.Replace(js, @"{&additionalOptions&}", footer._additionalOptions is null ? string.Empty : footer._additionalOptions);
-                        js = Regex.Replace(js, @"{&aboutText&}", footer._aboutText is null ? string.Empty : footer._aboutText);
+                        js = Regex.Replace(js, @"{&requirements&}", footer._requirements ?? string.Empty);
+                        js = Regex.Replace(js, @"{&additionalOptions&}", footer._additionalOptions ?? string.Empty);
+                        js = Regex.Replace(js, @"{&aboutText&}", footer._aboutText ?? string.Empty);
 
                         if (footer._aboutTitle is null && footer._aboutText is null)
                         {
