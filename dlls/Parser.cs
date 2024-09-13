@@ -52,21 +52,13 @@ namespace LevelPupper__Parser.dlls
                 text = ParseHtml(doc.DocumentNode);
 
                 if (Regex.IsMatch(text, @"javascript\:"))
-                {
                     return;
-                }
                 else if (RegularExp.isHeader().IsMatch(text))
-                {
                     currentText = HeaderJS();
-                }
                 else if (RegularExp.isFooter().IsMatch(text))
-                {
                     currentText = FooterJS();
-                }
                 else
-                {
                     return;
-                }
 
                 if (string.IsNullOrEmpty(currentText))
                 {

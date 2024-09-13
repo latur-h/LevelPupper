@@ -47,7 +47,7 @@ namespace LevelPupper__Parser.dlls
         public static partial Regex GetAbout();
         [GeneratedRegex(@"<h2>FAQ[s]?<\/h2>(.*?)$", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetFAQs();
-        [GeneratedRegex(@"<h3>(?>[\W])*(.*?)<\/h3>(?>\s)*<p>(?>[\W]*)(.*?)<\/p>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"<h3>(?>[\W])*?(.*?)<\/h3>(?=\s)*?(?>[\W]*?)(.*?)((?=<h3>)|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetFAQs_Items();
         #endregion
     }
