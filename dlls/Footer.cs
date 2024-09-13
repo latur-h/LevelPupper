@@ -248,7 +248,7 @@ namespace LevelPupper__Parser.dlls
 
             var about = RegularExp.GetAbout().Matches(input);
 
-            return new Tuple<string, string>(about[0].Groups[1].Value.Trim(), about[0].Groups[2].Value.Trim());
+            return new Tuple<string, string>(Regex.Replace(about[0].Groups[1].Value.Trim(), @"<(\/?)strong>", string.Empty), about[0].Groups[2].Value.Trim());
         }
         private Dictionary<string, string> GetFAQs(ref string input)
         {
