@@ -149,6 +149,14 @@ namespace LevelPupper__Parser.dlls
                                 result.Append(ParseHtml(child));
                             }
                             break;
+                        case "strong":
+                            if (child.ParentNode is not null)
+                            {
+                                result.Append($"<strong>");
+                                result.Append(ParseHtml(child));
+                                result.Append($"</strong>");
+                            }
+                            break;
                         case "li":
                             result.Append($"<{child.Name}>");
                             result.Append(ParseHtml(child));
@@ -249,12 +257,10 @@ namespace LevelPupper__Parser.dlls
 
             string text = RegularExp.GetFAQs().Match(input).Groups[1].Value;
 
-            text = Regex.Replace(text, @"<(\/?)strong>", string.Empty);
-
             Dictionary<string, string> faqs = new();
 
             foreach (Match i in RegularExp.GetFAQs_Items().Matches(text))
-                faqs.Add(i.Groups[1].Value, Regex.Replace(i.Groups[2].Value, @"\s*$", string.Empty));
+                faqs.Add(Regex.Replace(i.Groups[1].Value, @"<(\/?)strong>", string.Empty), Regex.Replace(i.Groups[2].Value, @"\s*$", string.Empty));
 
             return faqs;
         }
