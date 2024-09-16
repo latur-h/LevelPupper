@@ -14,7 +14,7 @@ namespace LevelPupper__Parser.dlls
         [GeneratedRegex(@"(<h2>Requirements<\/h2>)|(<h2>Additional Options<\/h2>)|(<h[23]>Boosting Method[s]?<\/h[23]>)|(<h2>(About .*?)<\/h2>)|(<h2>FAQ[s]?<\/h2>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex isFooter();
 
-        [GeneratedRegex(@"(H[23]\s*-\s*)|(\[link\!\]|(\x20|\xA0)+(?=<))", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"(H[23]\s*-\s*)|(УТП[1-5])|(\[link\!\]|(\x20|\xA0)+(?=<))", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetUnnecessaryElements();
         [GeneratedRegex(@"(\x20|\xA0)+", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetUnnecessarySpaces();
