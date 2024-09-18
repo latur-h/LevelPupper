@@ -43,9 +43,9 @@ namespace LevelPupper__Parser.dlls
         public static partial Regex GetBoosting_Methods();
         [GeneratedRegex(@"<li>(?>\W)*(piloted|self[\W]*?play)(?>[\W])*(.*?)<\/li>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetBoosting_Methods_Items();
-        [GeneratedRegex(@"<h2>(About .*?)<\/h2>(.*?)(?=<h2>|<h3>|\s*$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"<h2>(About .*?)<\/h2>(.*?)(?=<h[23]>FAQ[s]?<\/h[23]>|\s*$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetAbout();
-        [GeneratedRegex(@"<h2>FAQ[s]?<\/h2>(.*?)$", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"<h[23]>FAQ[s]?<\/h[23]>(.*?)$", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetFAQs();
         [GeneratedRegex(@"<h3>(?>[\W])*?(.*?)<\/h3>(?=\s)*?(?>[\W]*?)(.*?)((?=<h3>)|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetFAQs_Items();
