@@ -122,12 +122,12 @@ namespace LevelPupper__Parser.dlls
         private Tuple<string?, string?> GetTitle(ref string? input)
         {
             if (string.IsNullOrEmpty(input)) 
-                throw new Exception("Title was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+                throw new Exception($"Title was not found. Check the structure or formatting settings if this a mistake. Block is ignored.\n{DateTime.Now.ToShortTimeString()} | Preview was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
 
             MatchCollection titles = RegularExp.GetTitle().Matches(input);
             
             if (titles.Count > 2 || titles.Count < 1)
-                throw new Exception("Title was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+                throw new Exception($"Title was not found. Check the structure or formatting settings if this a mistake. Block is ignored.\n{DateTime.Now.ToShortTimeString()} | Preview was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
 
             if (titles.Count == 2)
             {
@@ -146,12 +146,12 @@ namespace LevelPupper__Parser.dlls
         private Tuple<string?, string?> GetDescription(ref string? input)
         {
             if (string.IsNullOrEmpty(input))
-                throw new Exception("Descriptions was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+                throw new Exception($"Descriptions was not found. Check the structure or formatting settings if this a mistake. Block is ignored.\n{DateTime.Now.ToShortTimeString()} | UTP was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
 
             MatchCollection descriptions = RegularExp.GetDescription().Matches(input);
 
             if (descriptions.Count < 1)
-                throw new Exception("Descriptions was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+                throw new Exception($"Descriptions was not found. Check the structure or formatting settings if this a mistake. Block is ignored.\n{DateTime.Now.ToShortTimeString()} | UTP was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
 
             StringBuilder utp = new();
 
@@ -218,6 +218,12 @@ namespace LevelPupper__Parser.dlls
 
                 if (columns is not null && columns.Count == 2)
                     seoTable.Add(_cleaner(columns[1].InnerText.Trim()));
+                else
+                {
+                    columns = row.SelectNodes("th");
+
+                    seoTable.Add(_cleaner(columns[1].InnerText.Trim()));
+                }
             }
 
             return new Tuple<string, string, string>(seoTable[0], seoTable[1], seoTable[2].Split('/').Where(x => x.Length > 0).Last());
@@ -235,7 +241,7 @@ namespace LevelPupper__Parser.dlls
         {
             if (string.IsNullOrEmpty(input)) return;
 
-            input = Regex.Replace(input, @"<td>.*<\/td>", string.Empty); 
+            input = Regex.Replace(input, @"<tr>.*<\/tr>", string.Empty); 
         }
         private string ParseHtml(HtmlNode node)
         {
@@ -251,7 +257,7 @@ namespace LevelPupper__Parser.dlls
                     {
                         case "h1":
                         case "h2":
-                        case "td":
+                        case "tr":
                         case "p":
                             result.Append($"<{child.Name}>");
                             result.Append(ParseHtml(child));
