@@ -24,10 +24,14 @@ namespace LevelPupper__Parser.dlls
 
         public string? _rewards;
 
+        public string? _defaultPossition;
+
         private readonly HtmlAgilityPack.HtmlDocument doc;
 
-        public Header(string html)
+        public Header(string html, string? defaultPossition = null)
         {
+            _defaultPossition = defaultPossition;
+
             HtmlAgilityPack.HtmlDocument doc = new();
             doc.LoadHtml(html);
 
@@ -111,7 +115,7 @@ namespace LevelPupper__Parser.dlls
                 {
                     input = RegularExp.GetUnnecessaryFooter().Replace(input, string.Empty);
 
-                    RTConsole.Write(@"Footer detected! Removed due the rules for headers.", Color.Red);
+                    RTConsole.Write("Footer detected! Removed due the rules for headers.\n", Color.Red);
                 }
                 input = RegularExp.GetUnnecessaryElements().Replace(input, string.Empty);
                 input = RegularExp.GetUnnecessarySpaces().Replace(input, " ");

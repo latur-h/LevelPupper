@@ -108,8 +108,15 @@ namespace LevelPupper__Parser.dlls
         {
             string html = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
 
-            using (Header header = new(html))            
+            using (Header header = new(html, defaultPossition: GetDefaultPossition()))
                 return builder.Build(JavaScriptBuilder.Script.General, header: header);
+        }
+        private string? GetDefaultPossition()
+        {
+            if (!_form.checkBox_DefaultPosstion.Checked || _form.textBox_DefaultPossition.Text.Length == 0)
+                return null;
+
+            return _form.textBox_DefaultPossition.Text;
         }
         private string FooterJS()
         {

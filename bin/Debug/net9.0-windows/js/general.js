@@ -28,6 +28,8 @@ javascript:(function()
 {
     document.getElementById("id_hidden").checked = true;
 
+    document.getElementById("id_pos").value = "{&possition&}";
+
     document.getElementById("id_codename").value = "{&url&}";
 
     document.getElementById("id_short_title").value = "{&preview&}";

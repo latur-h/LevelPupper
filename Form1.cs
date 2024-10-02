@@ -42,7 +42,8 @@ namespace LevelPupper__Parser
             try
             {
                 label_Version.Text = $"{File.ReadAllText(@"../../../version.txt")}";
-            } catch { RTConsole.Write("Version control file is not found. This message can be ignored.", Color.Red); }
+            }
+            catch { RTConsole.Write("Version control file is not found. This message can be ignored.", Color.Red); }
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -64,7 +65,7 @@ namespace LevelPupper__Parser
 
                 Invoke(() => Clipboard.SetText(text, TextDataFormat.UnicodeText));
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 RTConsole.Write(ex.Message);
             }
@@ -109,7 +110,7 @@ namespace LevelPupper__Parser
                                     result.Append(_parseHtml(child));
                                 }
                                 break;
-                            case "li":                                
+                            case "li":
                                 result.Append($"<{child.Name}>");
                                 result.Append(_parseHtml(child));
                                 result.Append($"</{child.Name}>");
@@ -134,6 +135,20 @@ namespace LevelPupper__Parser
                 }
                 return result.ToString();
             }
+        }
+
+        private void checkBox_DefaultPosstion_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_DefaultPosstion.Checked)
+                textBox_DefaultPossition.Enabled = true;
+            else
+                textBox_DefaultPossition.Enabled = false;
+        }
+
+        private void textBox_DefaultPossition_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                e.Handled = true;
         }
     }
 }

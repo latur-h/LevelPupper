@@ -44,6 +44,7 @@ namespace LevelPupper__Parser.dlls
                         js = Regex.Replace(js, @"{&title&}", header._title ?? string.Empty);
                         js = Regex.Replace(js, @"{&preview&}", header._preview ?? string.Empty);
                         js = Regex.Replace(js, @"{&url&}", header._seoURL ?? string.Empty);
+                        js = Regex.Replace(js, @"{&possition&}", header._defaultPossition ?? "1");
 
                         return js;
                     }

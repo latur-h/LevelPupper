@@ -33,6 +33,8 @@
             rtConsole = new RichTextBox();
             cb_AdditionalOptions = new CheckBox();
             label_Version = new Label();
+            checkBox_DefaultPosstion = new CheckBox();
+            textBox_DefaultPossition = new TextBox();
             SuspendLayout();
             // 
             // button_Category
@@ -60,7 +62,7 @@
             // cb_AdditionalOptions
             // 
             cb_AdditionalOptions.AutoSize = true;
-            cb_AdditionalOptions.Location = new Point(899, 110);
+            cb_AdditionalOptions.Location = new Point(899, 181);
             cb_AdditionalOptions.Name = "cb_AdditionalOptions";
             cb_AdditionalOptions.Size = new Size(126, 19);
             cb_AdditionalOptions.TabIndex = 2;
@@ -75,12 +77,34 @@
             label_Version.Size = new Size(0, 15);
             label_Version.TabIndex = 3;
             // 
+            // checkBox_DefaultPosstion
+            // 
+            checkBox_DefaultPosstion.AutoSize = true;
+            checkBox_DefaultPosstion.Location = new Point(899, 68);
+            checkBox_DefaultPosstion.Name = "checkBox_DefaultPosstion";
+            checkBox_DefaultPosstion.Size = new Size(115, 19);
+            checkBox_DefaultPosstion.TabIndex = 4;
+            checkBox_DefaultPosstion.Text = "Default possition";
+            checkBox_DefaultPosstion.UseVisualStyleBackColor = true;
+            checkBox_DefaultPosstion.CheckedChanged += checkBox_DefaultPosstion_CheckedChanged;
+            // 
+            // textBox_DefaultPossition
+            // 
+            textBox_DefaultPossition.Enabled = false;
+            textBox_DefaultPossition.Location = new Point(899, 93);
+            textBox_DefaultPossition.Name = "textBox_DefaultPossition";
+            textBox_DefaultPossition.Size = new Size(126, 23);
+            textBox_DefaultPossition.TabIndex = 5;
+            textBox_DefaultPossition.KeyPress += textBox_DefaultPossition_KeyPress;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Silver;
             ClientSize = new Size(1054, 558);
+            Controls.Add(textBox_DefaultPossition);
+            Controls.Add(checkBox_DefaultPosstion);
             Controls.Add(label_Version);
             Controls.Add(cb_AdditionalOptions);
             Controls.Add(rtConsole);
@@ -102,5 +126,7 @@
         public RichTextBox rtConsole;
         public CheckBox cb_AdditionalOptions;
         public Label label_Version;
+        public CheckBox checkBox_DefaultPosstion;
+        public TextBox textBox_DefaultPossition;
     }
 }
