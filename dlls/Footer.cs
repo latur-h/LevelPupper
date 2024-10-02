@@ -206,8 +206,8 @@ namespace LevelPupper__Parser.dlls
 
             MatchCollection lists = RegularExp.GetAdditional_Options_Feature_List().Matches(text);
 
-            foreach(Match match in lists)            
-                text = Regex.Replace(text, match.Value, parseList(match.Value));            
+            foreach(Match match in lists)
+                text = Regex.Replace(text, match.Value, parseList(match.Value));
 
             return text;
 
