@@ -15,9 +15,12 @@ async function insertText(requirements, addiptionalOptions, about)
     let textareaAdditionalOptions = document.querySelector('textarea[title="Rich Text Editor, id_description_elements-5-content"]');
     let textareaAbout = document.querySelector('textarea[title="Rich Text Editor, id_description_elements-14-content"]');
 
-    textareaRequirements.value = requirements;
-    textareaAdditionalOptions.value = addiptionalOptions;
-    textareaAbout.value = about;
+    if (requirements != "")
+        textareaRequirements.value = requirements;
+    if (addiptionalOptions != "")
+        textareaAdditionalOptions.value = addiptionalOptions;
+    if (about != "")
+        textareaAbout.value = about;
     
     document.getElementById('cke_400').click();
     document.getElementById('cke_704').click();
@@ -26,6 +29,9 @@ async function insertText(requirements, addiptionalOptions, about)
 
 function changeSelectElement(trigger, block)
 {
+    if (block == "")
+        return;
+
     var selectElement = document.getElementById(trigger);
 
     if (block == 0) { selectElement.value = selectElement.options[0].value; }
@@ -58,7 +64,7 @@ async function executeFunction(trigger, position, title, body)
     await delay(500);
 }
 
-javascript:(function()
+function insertStaticText(aboutTitle)
 {
     document.getElementById("id_description_elements-0-title").value = "Requirements";
 
@@ -83,13 +89,11 @@ javascript:(function()
     document.getElementById("id_description_elements-12-title").value = "Completion Time";
 
     document.getElementById("id_description_elements-14-show_title").checked = true;
-    document.getElementById("id_description_elements-14-title").value = "{&aboutTitle&}";
+
+    if (aboutTitle != "")
+        document.getElementById("id_description_elements-14-title").value = aboutTitle;
 
     document.getElementById("id_description_elements-16-show_title").checked = true;
     document.getElementById("id_description_elements-16-title").value = "FAQs";
-})();
+}
 
-changeSelectElement("id_description_elements-2-type", "0");
-changeSelectElement("id_description_elements-6-type", "{&boostingMethod&}");
-
-insertText("{&requirements&}", "{&additionalOptions&}", "{&aboutText&}");

@@ -11,20 +11,23 @@ namespace LevelPupper__Parser.dlls
     {
         private readonly string pathToGeneralJS;
         private readonly string pathToDescriptionJS;
+        private readonly string pathToCategoryJS;
 
         public enum Script
         {
             General,
-            Description
+            Description,
+            Category
         }
 
-        public JavaScriptBuilder(string general, string description)
+        public JavaScriptBuilder(string general, string description, string category)
         {
             pathToGeneralJS = general;
             pathToDescriptionJS = description;
+            pathToCategoryJS = category;
         }
 
-        public string Build(Script script, Header? header = null, Footer? footer = null, bool? isHeaderPresaved = null)
+        public string Build(Script script, Header? header = null, Footer? footer = null, Category? category = null, bool? isAboutNullifier = null)
         {
             switch (script)
             {
@@ -34,55 +37,92 @@ namespace LevelPupper__Parser.dlls
 
                     using (StreamReader reader = new(pathToGeneralJS, Encoding.Default))
                     {
-                        string js = reader.ReadToEnd();
+                        StringBuilder js = new(reader.ReadToEnd());
 
-                        js = Regex.Replace(js, @"{&advantages&}", header._utp ?? string.Empty);
-                        js = Regex.Replace(js, @"{&description&}", header._description ?? string.Empty);
-                        js = Regex.Replace(js, @"{&reward&}", header._rewards ?? string.Empty);
-                        js = Regex.Replace(js, @"{&seoDescription&}", header._seoDescription ?? string.Empty);
-                        js = Regex.Replace(js, @"{&seoTitle&}", header._seoTitle ?? string.Empty);
-                        js = Regex.Replace(js, @"{&title&}", header._title ?? string.Empty);
-                        js = Regex.Replace(js, @"{&preview&}", header._preview ?? string.Empty);
-                        js = Regex.Replace(js, @"{&url&}", header._seoURL ?? string.Empty);
-                        js = Regex.Replace(js, @"{&possition&}", header._defaultPossition ?? "1");
+                        js.AppendLine($"insertStaticText(" +
+                            $"\"{isNull(header._defaultPossition, "1")}\"," +
+                            $"\"{isNull(header._seoURL)}\"," +
+                            $"\"{isNull(header._preview)}\"," +
+                            $"\"{isNull(header._title)}\"," +
+                            $"\"{isNull(header._seoTitle)}\"," +
+                            $"\"{isNull(header._seoDescription)}\"" +
+                            $");");
 
-                        return js;
+                        js.AppendLine($"await insertText(" +
+                            $"\"{isNull(header._utp)}\"," +
+                            $"\"{isNull(header._description)}\"," +
+                            $"\"{isNull(header._rewards)}\"" +
+                            $");");
+
+                        return js.ToString();
                     }
                 case Script.Description:
                     if (footer is null)
-                        throw new Exception("Footer is null there");
+                        throw new Exception("Footer is null there.");
 
                     using (StreamReader reader = new(pathToDescriptionJS, Encoding.Default))
                     {
-                        string js = reader.ReadToEnd();
+                        StringBuilder js = new(reader.ReadToEnd());
 
-                        js = Regex.Replace(js, @"{&aboutTitle&}", footer._aboutTitle ?? "About");
-                        js = Regex.Replace(js, @"{&boostingMethod&}", footer.boostingMethods is null ? "0" : footer.boostingMethods.Count.ToString());
-                        js = Regex.Replace(js, @"{&requirements&}", footer._requirements ?? string.Empty);
-                        js = Regex.Replace(js, @"{&additionalOptions&}", footer._additionalOptions ?? string.Empty);
-                        js = Regex.Replace(js, @"{&aboutText&}", footer._aboutText ?? string.Empty);
+                        js.AppendLine($"insertStaticText(\"{isNull(footer._aboutTitle)}\");");
 
-                        if (footer._aboutTitle is null && footer._aboutText is null)
+                        js.AppendLine($"await insertText(" +
+                            $"\"{isNull(footer._requirements)}\"," +
+                            $"\"{isNull(footer._additionalOptions)}\"," +
+                            $"\"{isNull(footer._aboutText)}\"" +
+                            $");");
+
+                        js.AppendLine("changeSelectElement(\"id_description_elements-2-type\", \"0\")");
+                        js.AppendLine($"changeSelectElement(\"id_description_elements-6-type\", \"{(footer.boostingMethods is null ? "" : footer.boostingMethods.Count.ToString())}\");");
+
+                        if (isAboutNullifier ?? false && footer._aboutTitle is null && footer._aboutText is null)
                         {
-                            js += $"document.getElementById(\"id_description_elements-13-show_title\").checked = false;\n";
-                            js += $"document.getElementById(\"id_description_elements-14-show_title\").checked = false;\n";
+                            js.AppendLine($"document.getElementById(\"id_description_elements-13-show_title\").checked = false;");
+                            js.AppendLine($"document.getElementById(\"id_description_elements-14-show_title\").checked = false;");
 
-                            js += $"changeSelectElement(\"id_description_elements-13-type\", \"0\");\n";
-                            js += $"changeSelectElement(\"id_description_elements-14-type\", \"0\");\n";
+                            js.AppendLine($"changeSelectElement(\"id_description_elements-13-type\", \"0\");");
+                            js.AppendLine($"changeSelectElement(\"id_description_elements-14-type\", \"0\");");
                         }
 
                         int count = 1;
                         foreach (var i in footer.boostingMethods is null ? new Dictionary<string, string>() : footer.boostingMethods)
-                            js += $"await executeFunction(\"#add_id_description_elements-6-elements\", {count++}, \"{i.Key}\", \"{i.Value}\");\n";
+                            js.AppendLine($"await executeFunction(\"#add_id_description_elements-6-elements\", {count++}, \"{i.Key}\", \"{i.Value}\");");
 
                         count = 1;
                         foreach (var i in footer.faqs is null ? new Dictionary<string, string>() : footer.faqs)
-                            js += $"await executeFunction(\"#add_id_description_elements-16-elements\", {count++}, \"{i.Key}\", \"{i.Value}\");\n";
+                            js.AppendLine($"await executeFunction(\"#add_id_description_elements-16-elements\", {count++}, \"{i.Key}\", \"{i.Value}\");");
 
-                        return js;
+                        return js.ToString();
+                    }
+                case Script.Category:
+                    if (category is null) 
+                        throw new Exception("Category is null there.");
+
+                    using (StreamReader reader = new(pathToCategoryJS, Encoding.Default))
+                    {
+                        StringBuilder js = new(reader.ReadToEnd());
+
+                        js.AppendLine($"insertStaticText(" +
+                            $"\"{isNull(category._seoURL)}\"," +
+                            $"\"{isNull(category._title)}\"," +
+                            $"\"{isNull(category._seoTitle)}\"," +
+                            $"\"{isNull(category._seoDescription)}\"" +
+                            $");");
+
+                        js.AppendLine($"await insertText(" +
+                            $"\"{isNull(category._shortDescription)}\"," +
+                            $"\"{isNull(category._pageDescription)}\"" +
+                            $");");
+
+                        return js.ToString();
                     }
                 default:
                     return string.Empty;
+            }
+
+            string isNull(string? text, string? customValue = null)
+            {
+                return string.IsNullOrEmpty(text) ? customValue ?? string.Empty : text;
             }
         }
     }

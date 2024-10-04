@@ -29,23 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            button_Category = new Button();
             rtConsole = new RichTextBox();
             cb_AdditionalOptions = new CheckBox();
             label_Version = new Label();
             checkBox_DefaultPosstion = new CheckBox();
             textBox_DefaultPossition = new TextBox();
+            cb_Category = new CheckBox();
+            cb_Nullifier = new CheckBox();
             SuspendLayout();
-            // 
-            // button_Category
-            // 
-            button_Category.Location = new Point(899, 12);
-            button_Category.Name = "button_Category";
-            button_Category.Size = new Size(143, 35);
-            button_Category.TabIndex = 0;
-            button_Category.Text = "Format the Category";
-            button_Category.UseVisualStyleBackColor = true;
-            button_Category.Click += button_Category_Click;
             // 
             // rtConsole
             // 
@@ -62,7 +53,7 @@
             // cb_AdditionalOptions
             // 
             cb_AdditionalOptions.AutoSize = true;
-            cb_AdditionalOptions.Location = new Point(899, 181);
+            cb_AdditionalOptions.Location = new Point(899, 261);
             cb_AdditionalOptions.Name = "cb_AdditionalOptions";
             cb_AdditionalOptions.Size = new Size(126, 19);
             cb_AdditionalOptions.TabIndex = 2;
@@ -80,7 +71,7 @@
             // checkBox_DefaultPosstion
             // 
             checkBox_DefaultPosstion.AutoSize = true;
-            checkBox_DefaultPosstion.Location = new Point(899, 68);
+            checkBox_DefaultPosstion.Location = new Point(899, 54);
             checkBox_DefaultPosstion.Name = "checkBox_DefaultPosstion";
             checkBox_DefaultPosstion.Size = new Size(115, 19);
             checkBox_DefaultPosstion.TabIndex = 4;
@@ -91,11 +82,31 @@
             // textBox_DefaultPossition
             // 
             textBox_DefaultPossition.Enabled = false;
-            textBox_DefaultPossition.Location = new Point(899, 93);
+            textBox_DefaultPossition.Location = new Point(899, 79);
             textBox_DefaultPossition.Name = "textBox_DefaultPossition";
             textBox_DefaultPossition.Size = new Size(126, 23);
             textBox_DefaultPossition.TabIndex = 5;
             textBox_DefaultPossition.KeyPress += textBox_DefaultPossition_KeyPress;
+            // 
+            // cb_Category
+            // 
+            cb_Category.AutoSize = true;
+            cb_Category.Location = new Point(899, 18);
+            cb_Category.Name = "cb_Category";
+            cb_Category.Size = new Size(108, 19);
+            cb_Category.TabIndex = 6;
+            cb_Category.Text = "Category Mode";
+            cb_Category.UseVisualStyleBackColor = true;
+            // 
+            // cb_Nullifier
+            // 
+            cb_Nullifier.AutoSize = true;
+            cb_Nullifier.Location = new Point(899, 130);
+            cb_Nullifier.Name = "cb_Nullifier";
+            cb_Nullifier.Size = new Size(102, 19);
+            cb_Nullifier.TabIndex = 7;
+            cb_Nullifier.Text = "About nullifier";
+            cb_Nullifier.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -103,12 +114,13 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Silver;
             ClientSize = new Size(1054, 558);
+            Controls.Add(cb_Nullifier);
+            Controls.Add(cb_Category);
             Controls.Add(textBox_DefaultPossition);
             Controls.Add(checkBox_DefaultPosstion);
             Controls.Add(label_Version);
             Controls.Add(cb_AdditionalOptions);
             Controls.Add(rtConsole);
-            Controls.Add(button_Category);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximumSize = new Size(1070, 597);
             MinimumSize = new Size(1070, 597);
@@ -121,12 +133,12 @@
         }
 
         #endregion
-
-        public Button button_Category;
         public RichTextBox rtConsole;
         public CheckBox cb_AdditionalOptions;
         public Label label_Version;
         public CheckBox checkBox_DefaultPosstion;
         public TextBox textBox_DefaultPossition;
+        public CheckBox cb_Category;
+        public CheckBox cb_Nullifier;
     }
 }

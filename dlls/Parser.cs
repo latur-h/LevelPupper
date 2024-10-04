@@ -33,7 +33,7 @@ namespace LevelPupper__Parser.dlls
             _form = form;
             _handle = handle;
 
-            builder = new(Path.Combine("js", "general.js"), Path.Combine(@"js", "descriptions elements.js"));
+            builder = new(Path.Combine("js", "general.js"), Path.Combine(@"js", "descriptions elements.js"), Path.Combine(@"js", "category.js"));
 
             Init();
         }
@@ -50,9 +50,14 @@ namespace LevelPupper__Parser.dlls
                 doc.LoadHtml(text);
 
                 text = ParseHtml(doc.DocumentNode);
+                text = HttpUtility.HtmlDecode(text);
 
-                if (Regex.IsMatch(text, @"javascript\:"))
+                //RTConsole.Write(text);
+
+                if (Regex.IsMatch(text, @"insertStaticText"))
                     return;
+                else if (_form.cb_Category.Checked)
+                    currentText = CategoryJS();
                 else if (RegularExp.isHeader().IsMatch(text))
                     currentText = HeaderJS();
                 else if (RegularExp.isFooter().IsMatch(text))
@@ -90,6 +95,7 @@ namespace LevelPupper__Parser.dlls
                     {
                         case "h1":
                         case "h2":
+                        case "h3":
                         case "td":
                         case "p":
                             result.Append($"<{child.Name}>");
@@ -123,7 +129,14 @@ namespace LevelPupper__Parser.dlls
             string html = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
             
             using (Footer footer = new(html, addtionalOptions_Feature: _form.cb_AdditionalOptions.Checked))
-                return builder.Build(JavaScriptBuilder.Script.Description, footer: footer);
+                return builder.Build(JavaScriptBuilder.Script.Description, footer: footer, isAboutNullifier: _form.cb_Nullifier.Checked);
+        }
+        private string CategoryJS()
+        {
+            string html = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
+
+            using (Category category = new(html))
+                return builder.Build(JavaScriptBuilder.Script.Category, category: category);
         }
         public void Dispose() => RemoveClipboardFormatListener(_handle);
     }

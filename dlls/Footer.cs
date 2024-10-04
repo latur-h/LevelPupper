@@ -35,22 +35,15 @@ namespace LevelPupper__Parser.dlls
 
             this.doc = doc;
 
-            if (!Init()) throw new Exception("Incorrect tags");
+            Init();
         }
-        private bool Init()
+        private void Init()
         {
             string? text = ParseHtml(doc.DocumentNode);
 
-            if (string.IsNullOrEmpty(text)) return false;
-
             _cleaner(ref text);
 
-            try
-            {
-                if (!RegularExp.isFooter().IsMatch(text is not null ? text : throw new Exception("Invalid text.")))
-                    throw new Exception("Incorrect tags.");
-            }
-            catch (Exception e) { RTConsole.Write(e.Message + "\n", Color.Red); return false; }
+            if (string.IsNullOrEmpty(text)) throw new Exception("Invalid text!");
 
             RTConsole.Write("Start footer parsing...");
 
@@ -102,15 +95,13 @@ namespace LevelPupper__Parser.dlls
 
             RTConsole.Write("Footer parse is complete.\n");
 
-            return true;
-
             void _cleaner(ref string? input)
             {
                 if (string.IsNullOrEmpty(input)) return;
 
                 input = HttpUtility.HtmlDecode(input);
-                input = RegularExp.GetUnnecessaryElements().Replace(input, string.Empty);
                 input = RegularExp.GetUnnecessarySpaces().Replace(input, " ");
+                input = RegularExp.GetUnnecessaryElements().Replace(input, string.Empty);
                 input = input.Replace("\"", "\\\"");
             }
         }
