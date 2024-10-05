@@ -41,6 +41,7 @@
             textBox_Codename = new TextBox();
             label1 = new Label();
             label2 = new Label();
+            button_Save = new Button();
             SuspendLayout();
             // 
             // rtConsole
@@ -58,7 +59,7 @@
             // cb_AdditionalOptions
             // 
             cb_AdditionalOptions.AutoSize = true;
-            cb_AdditionalOptions.Location = new Point(899, 261);
+            cb_AdditionalOptions.Location = new Point(899, 211);
             cb_AdditionalOptions.Name = "cb_AdditionalOptions";
             cb_AdditionalOptions.Size = new Size(126, 19);
             cb_AdditionalOptions.TabIndex = 2;
@@ -115,7 +116,7 @@
             // 
             // button_Execute
             // 
-            button_Execute.Location = new Point(926, 473);
+            button_Execute.Location = new Point(926, 400);
             button_Execute.Name = "button_Execute";
             button_Execute.Size = new Size(75, 23);
             button_Execute.TabIndex = 8;
@@ -127,14 +128,14 @@
             // 
             comboBox_Game.FormattingEnabled = true;
             comboBox_Game.Items.AddRange(new object[] { "path-of-exile", "wow", "d2", "wow-cataclysm", "season-of-discovery", "apex", "d4", "last-epoch", "the-first-descendant" });
-            comboBox_Game.Location = new Point(904, 365);
+            comboBox_Game.Location = new Point(904, 292);
             comboBox_Game.Name = "comboBox_Game";
             comboBox_Game.Size = new Size(121, 23);
             comboBox_Game.TabIndex = 9;
             // 
             // textBox_Codename
             // 
-            textBox_Codename.Location = new Point(904, 427);
+            textBox_Codename.Location = new Point(904, 354);
             textBox_Codename.Name = "textBox_Codename";
             textBox_Codename.Size = new Size(121, 23);
             textBox_Codename.TabIndex = 10;
@@ -142,7 +143,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(904, 338);
+            label1.Location = new Point(904, 265);
             label1.Name = "label1";
             label1.Size = new Size(38, 15);
             label1.TabIndex = 11;
@@ -151,11 +152,22 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(904, 400);
+            label2.Location = new Point(904, 327);
             label2.Name = "label2";
             label2.Size = new Size(65, 15);
             label2.TabIndex = 12;
             label2.Text = "Codename";
+            // 
+            // button_Save
+            // 
+            button_Save.Enabled = false;
+            button_Save.Location = new Point(926, 452);
+            button_Save.Name = "button_Save";
+            button_Save.Size = new Size(75, 23);
+            button_Save.TabIndex = 13;
+            button_Save.Text = "Save";
+            button_Save.UseVisualStyleBackColor = true;
+            button_Save.Click += button_Save_Click;
             // 
             // Form1
             // 
@@ -163,6 +175,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Silver;
             ClientSize = new Size(1054, 558);
+            Controls.Add(button_Save);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(textBox_Codename);
@@ -199,5 +212,6 @@
         private TextBox textBox_Codename;
         private Label label1;
         private Label label2;
+        private Button button_Save;
     }
 }

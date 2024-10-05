@@ -132,7 +132,7 @@ namespace LevelPupper__Parser.dlls
         public int? number_from { get; set; }
         public int? number_to { get; set; }
         public double? step { get; set; }
-        public double? price { get; set; }
+        public decimal? price { get; set; }
         public double? additional_etc_minutes { get; set; }
     }
 
@@ -229,9 +229,9 @@ namespace LevelPupper__Parser.dlls
         public int? id { get; set; }
         public string? title { get; set; }
         public int? price_type { get; set; }
-        public object? price_amount { get; set; }
-        public object? preview_price_amount { get; set; }
-        public double? price_percent { get; set; }
+        public decimal? price_amount { get; set; }
+        public decimal? preview_price_amount { get; set; }
+        public decimal? price_percent { get; set; }
         public bool? checked_by_default { get; set; }
         public bool? use_as_basic_price { get; set; }
         public object? additional_etc_hours { get; set; }
