@@ -284,61 +284,11 @@ namespace LevelPupper__Parser.dlls.API
                 #region API Calls
                 if (valuesOptionsPayloads.Count > 0)
                     foreach (var i in valuesOptionsPayloads)
-                    {
-                        HttpResponseMessage targetPageResponse = await client.GetAsync(url_ValueOption + i.Key + @"/change/");
-                        string targetPageContent = await targetPageResponse.Content.ReadAsStringAsync();
-
-                        string targetCsrfToken = "";
-                        var targetTokenMatch = Regex.Match(targetPageContent, @"<input type=""hidden"" name=""csrfmiddlewaretoken"" value=""([^""]+)""");
-                        if (targetTokenMatch.Success)
-                        {
-                            targetCsrfToken = targetTokenMatch.Groups[1].Value;
-                        }
-                        else throw new Exception("CSRF token not found on target page!");
-
-                        i.Value["csrfmiddlewaretoken"] = targetCsrfToken;
-
-                        HttpContent postContent = new FormUrlEncodedContent(i.Value);
-
-                        HttpResponseMessage postResponse = await client.PostAsync(url_ValueOption + i.Key + @"/change/", postContent);
-
-                        if (postResponse.IsSuccessStatusCode)
-                        {
-                            await postResponse.Content.ReadAsStringAsync();
-                            RTConsole.Write($"{i.Key} - is succecfully changed.", Color.Green);
-                        }
-                        else
-                            throw new Exception($"POST request failed with status code: {postResponse.StatusCode}");
-                    }
+                        await POST(client, url_ValueOption, i.Key, i.Value);
 
                 if (rangeGradationPayloads.Count > 0)
                     foreach (var i in rangeGradationPayloads)
-                    {
-                        HttpResponseMessage targetPageResponse = await client.GetAsync(url_RangeGradation + i.Key + @"/change/");
-                        string targetPageContent = await targetPageResponse.Content.ReadAsStringAsync();
-
-                        string targetCsrfToken = "";
-                        var targetTokenMatch = Regex.Match(targetPageContent, @"<input type=""hidden"" name=""csrfmiddlewaretoken"" value=""([^""]+)""");
-                        if (targetTokenMatch.Success)
-                        {
-                            targetCsrfToken = targetTokenMatch.Groups[1].Value;
-                        }
-                        else throw new Exception("CSRF token not found on target page!");
-
-                        i.Value["csrfmiddlewaretoken"] = targetCsrfToken;
-
-                        HttpContent postContent = new FormUrlEncodedContent(i.Value);
-
-                        HttpResponseMessage postResponse = await client.PostAsync(url_RangeGradation + i.Key + @"/change/", postContent);
-
-                        if (postResponse.IsSuccessStatusCode)
-                        {
-                            await postResponse.Content.ReadAsStringAsync();
-                            RTConsole.Write($"{i.Key} - is succecfully changed.", Color.Green);
-                        }
-                        else
-                            throw new Exception($"POST request failed with status code: {postResponse.StatusCode}");
-                    }
+                        await POST(client, url_RangeGradation, i.Key, i.Value);
                 #endregion
             }
             #endregion
@@ -362,9 +312,11 @@ namespace LevelPupper__Parser.dlls.API
 
                 return id;
             }
-            async void POST(HttpClient client, string url, string id, Dictionary<string, string> payload)
+            async Task POST(HttpClient client, string url, string id, Dictionary<string, string> payload)
             {
-                HttpResponseMessage targetPageResponse = await client.GetAsync(url + id);
+                string fullurl = url + id + @"/change/";
+
+                HttpResponseMessage targetPageResponse = await client.GetAsync(fullurl);
                 string targetPageContent = await targetPageResponse.Content.ReadAsStringAsync();
 
                 string targetCsrfToken = "";
@@ -379,7 +331,7 @@ namespace LevelPupper__Parser.dlls.API
 
                 HttpContent postContent = new FormUrlEncodedContent(payload);
 
-                HttpResponseMessage postResponse = await client.PostAsync(url, postContent);
+                HttpResponseMessage postResponse = await client.PostAsync(fullurl, postContent);
 
                 if (postResponse.IsSuccessStatusCode)
                     RTConsole.Write($"{id} - is succecfully changed.", Color.Green);
