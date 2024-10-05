@@ -27,7 +27,7 @@ namespace LevelPupper__Parser.dlls
             pathToCategoryJS = category;
         }
 
-        public string Build(Script script, Header? header = null, Footer? footer = null, Category? category = null, bool? isAboutNullifier = null)
+        public string Build(Script script, Header? header = null, Footer? footer = null, Ccategory? category = null, bool? isAboutNullifier = null)
         {
             switch (script)
             {

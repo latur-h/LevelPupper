@@ -135,7 +135,7 @@ namespace LevelPupper__Parser.dlls
         {
             string html = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
 
-            using (Category category = new(html))
+            using (Ccategory category = new(html))
                 return builder.Build(JavaScriptBuilder.Script.Category, category: category);
         }
         public void Dispose() => RemoveClipboardFormatListener(_handle);

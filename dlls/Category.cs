@@ -9,7 +9,7 @@ using System.Web;
 
 namespace LevelPupper__Parser.dlls
 {
-    class Category : IDisposable
+    class Ccategory : IDisposable
     {
         public string? _seoDescription;
         public string? _seoTitle;
@@ -22,7 +22,7 @@ namespace LevelPupper__Parser.dlls
 
         private readonly HtmlAgilityPack.HtmlDocument doc;
 
-        public Category(string html)
+        public Ccategory(string html)
         {
             HtmlAgilityPack.HtmlDocument doc = new();
             doc.LoadHtml(html);

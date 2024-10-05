@@ -36,6 +36,11 @@
             textBox_DefaultPossition = new TextBox();
             cb_Category = new CheckBox();
             cb_Nullifier = new CheckBox();
+            button_Execute = new Button();
+            comboBox_Game = new ComboBox();
+            textBox_Codename = new TextBox();
+            label1 = new Label();
+            label2 = new Label();
             SuspendLayout();
             // 
             // rtConsole
@@ -49,6 +54,7 @@
             rtConsole.Size = new Size(881, 534);
             rtConsole.TabIndex = 1;
             rtConsole.Text = "";
+            rtConsole.LinkClicked += rtConsole_LinkClicked;
             // 
             // cb_AdditionalOptions
             // 
@@ -108,12 +114,61 @@
             cb_Nullifier.Text = "About nullifier";
             cb_Nullifier.UseVisualStyleBackColor = true;
             // 
+            // button_Execute
+            // 
+            button_Execute.Location = new Point(926, 473);
+            button_Execute.Name = "button_Execute";
+            button_Execute.Size = new Size(75, 23);
+            button_Execute.TabIndex = 8;
+            button_Execute.Text = "Execute";
+            button_Execute.UseVisualStyleBackColor = true;
+            button_Execute.Click += button_Execute_Click;
+            // 
+            // comboBox_Game
+            // 
+            comboBox_Game.FormattingEnabled = true;
+            comboBox_Game.Items.AddRange(new object[] { "path-of-exile", "wow", "d2", "wow-cataclysm", "season-of-discovery", "apex", "d4", "last-epoch", "the-first-descendant" });
+            comboBox_Game.Location = new Point(904, 365);
+            comboBox_Game.Name = "comboBox_Game";
+            comboBox_Game.Size = new Size(121, 23);
+            comboBox_Game.TabIndex = 9;
+            // 
+            // textBox_Codename
+            // 
+            textBox_Codename.Location = new Point(904, 427);
+            textBox_Codename.Name = "textBox_Codename";
+            textBox_Codename.Size = new Size(121, 23);
+            textBox_Codename.TabIndex = 10;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(904, 338);
+            label1.Name = "label1";
+            label1.Size = new Size(38, 15);
+            label1.TabIndex = 11;
+            label1.Text = "Game";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(904, 400);
+            label2.Name = "label2";
+            label2.Size = new Size(65, 15);
+            label2.TabIndex = 12;
+            label2.Text = "Codename";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Silver;
             ClientSize = new Size(1054, 558);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(textBox_Codename);
+            Controls.Add(comboBox_Game);
+            Controls.Add(button_Execute);
             Controls.Add(cb_Nullifier);
             Controls.Add(cb_Category);
             Controls.Add(textBox_DefaultPossition);
@@ -140,5 +195,10 @@
         public TextBox textBox_DefaultPossition;
         public CheckBox cb_Category;
         public CheckBox cb_Nullifier;
+        private Button button_Execute;
+        private ComboBox comboBox_Game;
+        private TextBox textBox_Codename;
+        private Label label1;
+        private Label label2;
     }
 }
