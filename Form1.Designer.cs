@@ -50,7 +50,6 @@
             rtConsole.ForeColor = Color.LightGray;
             rtConsole.Location = new Point(12, 12);
             rtConsole.Name = "rtConsole";
-            rtConsole.ReadOnly = true;
             rtConsole.Size = new Size(881, 534);
             rtConsole.TabIndex = 1;
             rtConsole.Text = "";

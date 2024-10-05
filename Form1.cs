@@ -105,7 +105,9 @@ namespace LevelPupper__Parser
 
                         if (product is null) throw new Exception("Invalid data.");
 
-                        StringBuilder rtfText = new StringBuilder(@"{\rtf1\ansi Description elements:\par");
+                        StringBuilder rtfText = new StringBuilder($@"{{\rtf1\ansi {{\field{{\*\fldinst HYPERLINK ""https://api.levelupper.com/admin/game_services/gameservice/{product.service.id}""}}{{\fldrslt {product.service?.title ?? "Title"}}}}}\par");
+
+                        rtfText.AppendLine($@"\par Description elements:\par");
 
                         foreach (var i in product.service?.description_elements?.Where(x => x.elements?.Count > 0))
                         {
@@ -117,6 +119,21 @@ namespace LevelPupper__Parser
                             }
                         }
 
+                        string base_price = string.Empty;
+                        if (product.service.price_from is not null && product.service.price_from > 0) base_price = product.service.price_from.ToString() + "$";
+                        rtfText.AppendLine($@"\par Base price - {base_price} \par");
+
+                        string preview_price = string.Empty;
+                        if (product.service.price_from_display is not null && product.service.price_from_display > 0) preview_price = product.service.price_from_display.ToString() + "$";
+                        rtfText.AppendLine($@"Preview price - {preview_price}\par");                                               
+
+                        rtfText.AppendLine($@"Price prefix - {product.service.price_prefix}\par");
+                        rtfText.AppendLine($@"Price sufix - {product.service.price_sufix}\par");
+
+                        string preview_discount_price = string.Empty;
+                        if (product.service.preview_discount_price is not null && product.service.preview_discount_price > 0) preview_discount_price = product.service.preview_discount_price.ToString() + "$";
+                        rtfText.AppendLine($@"Preview discount price - {preview_discount_price}\par");
+
                         rtfText.AppendLine(@"\par Value options:\par");
 
                         foreach (var i in product.options)
@@ -127,7 +144,11 @@ namespace LevelPupper__Parser
 
                                 foreach (var element in i.range_gradations)
                                 {
-                                    rtfText.AppendLine($@"\tab\tab {{\field{{\*\fldinst HYPERLINK ""https://api.levelupper.com/admin/game_services/valueoption/{element.id}""}}{{\fldrslt {element.title}}}}}\par");
+                                    string price = "Free";
+
+                                    if (element.price is not null) price = element.price.ToString() + "$";
+
+                                    rtfText.AppendLine($@"\tab\tab {{\field{{\*\fldinst HYPERLINK ""https://api.levelupper.com/admin/game_services/rangegradation/{element.id}""}}{{\fldrslt {element.title}}}}} - {price}\par");
                                 }
                             }
 
@@ -137,14 +158,21 @@ namespace LevelPupper__Parser
 
                                 foreach (var element in i.values_options)
                                 {
-                                    rtfText.AppendLine($@"\tab\tab {{\field{{\*\fldinst HYPERLINK ""https://api.levelupper.com/admin/game_services/valueoption/{element.id}""}}{{\fldrslt {element.title}}}}}\par");
+                                    string price = "Free";
+
+                                    if (element.price_amount is not null) price = element.price_amount.ToString() + "$";
+                                    else if (element.price_percent is not null) price = element.price_percent.ToString() + "%";
+
+                                    rtfText.AppendLine($@"\tab\tab {{\field{{\*\fldinst HYPERLINK ""https://api.levelupper.com/admin/game_services/valueoption/{element.id}""}}{{\fldrslt {element.title}}}}} - {price}\par");
                                 }
                             }
                         }
 
-                        rtfText.AppendLine("}");
+                        rtfText.AppendLine(@"\par \par}");
 
                         rtConsole.Rtf = rtfText.ToString();
+
+                        //RTConsole.Write(rtConsole.Text);
                     }
                     else
                     {
