@@ -104,11 +104,23 @@ namespace LevelPupper__Parser
             button_Save.Enabled = true;
         }
 
-        private void button_Save_Click(object sender, EventArgs e)
+        private async void button_Save_Click(object sender, EventArgs e)
         {
-            _pupser.Save(rtConsole.Text);
+            try
+            {
+                await _pupser.Save(rtConsole.Text);
 
-            button_Save.Enabled = false;
+                RTConsole.Write("Pip");
+                RTConsole.Write("Price change is compelete.", Color.Green);
+
+                button_Save.Enabled = false;
+            }
+            catch (Exception ex)
+            {
+                RTConsole.Write("Pip");
+                RTConsole.Write(ex.Message, Color.Red);
+                RTConsole.Write("Price change is failed.", Color.Red);
+            }
         }
     }
 }

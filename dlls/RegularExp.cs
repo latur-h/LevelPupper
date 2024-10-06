@@ -59,7 +59,7 @@ namespace LevelPupper__Parser.dlls
         #endregion
 
         #region API
-        [GeneratedRegex(@"""(?:https://api\.levelupper\.com/admin/game_services/)(?'ServiceType'.*?)/(?'Id'\d+)""(?:.*?)-\s(?'price'[-]?\d+([.]\d+)?)?(?'priceType'[$%]|Free)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"""(?:https://api\.levelupper\.com/admin/game_services/)(?'ServiceType'.*?)/(?'Id'\d+)""(?:.*?)-\s*(?'price'[-]?\d+([.]\d+)?)?(?'priceType'[$%]|Free)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetOption();
         #endregion
     }

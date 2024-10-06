@@ -155,7 +155,7 @@ namespace LevelPupper__Parser.dlls.API
             return rtfText.ToString();
         }
 
-        public async void Save(string text)
+        public async Task Save(string text)
         {
             var matches = RegularExp.GetOption().Matches(text);
 
@@ -176,6 +176,12 @@ namespace LevelPupper__Parser.dlls.API
 
             var valuesOptionsPayloads = new Dictionary<string, Dictionary<string, string>>();
             var rangeGradationPayloads = new Dictionary<string, Dictionary<string, string>>();
+
+            if (values.Count != valueOptions.Count())
+                throw new Exception("Error! Check value options, prices must always follow with next symbols '$' or '%' without any white-spaces.");
+
+            if (ranges.Count != rangeGradations.Count())
+                throw new Exception("Error! Check range gradations, prices must always follow with next symbols '$' and never be free or '%' without any white-spaces.");
 
             if (values is not null)
                 foreach (var i in values)
@@ -224,6 +230,9 @@ namespace LevelPupper__Parser.dlls.API
                 {
                     Match newValueOption = rangeGradations.First(x => x.Groups["Id"].ToString() == i.Key);
 
+                    if (newValueOption.Groups["priceType"].Value == "Free" || newValueOption.Groups["priceType"].Value == "%")
+                        throw new Exception("Error! Check range gradations, prices must always follow with next symbols '$' and never be free or '%' without any white-spaces.");
+
                     if (i.Value.price == decimal.Parse(newValueOption.Groups["price"].Value)) continue;
 
                     Dictionary<string, string> payload = new();
@@ -242,6 +251,8 @@ namespace LevelPupper__Parser.dlls.API
                     rangeGradationPayloads.Add(i.Value.id.ToString() ?? string.Empty, payload);
                 }
 
+            if (valuesOptionsPayloads.Count == 0 && rangeGradationPayloads.Count == 0)
+                throw new Exception("Nothing to commit.");
 
             #region Login
             var handler = new HttpClientHandler
@@ -297,7 +308,7 @@ namespace LevelPupper__Parser.dlls.API
             {
                 string id = string.Empty;
 
-                switch (type)
+                switch (type.ToLower())
                 {
                     case "$":
                         id = "2";
@@ -305,7 +316,7 @@ namespace LevelPupper__Parser.dlls.API
                     case "%":
                         id = "3";
                         break;
-                    case "Free":
+                    case "free":
                         id = "1";
                         break;
                 }
