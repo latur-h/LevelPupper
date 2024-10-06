@@ -11,8 +11,8 @@ namespace LevelPupper__Parser.dlls
 {
     internal static class Config
     {
-        private static IConfiguration _configuration;
-        private static ServiceProvider _provider;
+        private static IConfiguration? _configuration;
+        private static ServiceProvider? _provider;
 
         public static void LoadConfigs(string? pathToEnv)
         {
@@ -45,6 +45,6 @@ namespace LevelPupper__Parser.dlls
             }
         }
 
-        public static API_Pupser_Configuration GetAPI() => _provider.GetService<API_Pupser_Configuration>();
+        public static API_Pupser_Configuration? GetAPI() => _provider?.GetService<API_Pupser_Configuration>();
     }
 }

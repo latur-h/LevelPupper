@@ -19,7 +19,7 @@ namespace LevelPupper__Parser
     public partial class Form1 : Form
     {
         private Parser? parser;
-        private API_Pupser? _pupser;
+        private API_Pupser _pupser;
 
         public Form1()
         {
@@ -95,7 +95,7 @@ namespace LevelPupper__Parser
             });
         }
 
-        private async void button_Execute_Click(object sender, EventArgs e)
+        private void button_Execute_Click(object sender, EventArgs e)
         {
             _pupser = new(comboBox_Game.Text, textBox_Codename.Text, Config.GetAPI());
 
@@ -108,7 +108,7 @@ namespace LevelPupper__Parser
         {
             try
             {
-                await _pupser.Save(rtConsole.Text);
+                rtConsole.Rtf = await _pupser.Save(rtConsole.Text);
 
                 RTConsole.Write("Pip");
                 RTConsole.Write("Price change is compelete.", Color.Green);
@@ -118,8 +118,7 @@ namespace LevelPupper__Parser
             catch (Exception ex)
             {
                 RTConsole.Write("Pip");
-                RTConsole.Write(ex.Message, Color.Red);
-                RTConsole.Write("Price change is failed.", Color.Red);
+                RTConsole.Write($"Price change is failed with next message: {ex.Message}", Color.Red);
             }
         }
     }

@@ -8,6 +8,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace LevelPupper__Parser.dlls.API
 {
@@ -25,6 +26,7 @@ namespace LevelPupper__Parser.dlls.API
         private string? url_ValueOption { get; }
 
         private Product? _product { get; set; }
+        private string? rtfText { get; set; }
 
         public API_Pupser(string game, string codename, API_Pupser_Configuration pupser)
         {
@@ -152,12 +154,15 @@ namespace LevelPupper__Parser.dlls.API
 
             rtfText.AppendLine(@"\par \par}");
 
+            this.rtfText = rtfText.ToString();
+
             return rtfText.ToString();
         }
 
-        public async Task Save(string text)
+        public async Task<string> Save(string? text)
         {
-            var matches = RegularExp.GetOption().Matches(text);
+            if (string.IsNullOrEmpty(text)) throw new Exception("Text is empty");
+                var matches = RegularExp.GetOption().Matches(text);
 
             if (matches is null) throw new Exception("Invalid text.");
 
@@ -166,21 +171,21 @@ namespace LevelPupper__Parser.dlls.API
 
             var values = _product?.options?
                 .Where(x => x.values_options is not null && x.values_options.Count > 0)
-                .Select(x => x.values_options).SelectMany(x => x)
+                .Select(x => x.values_options).SelectMany(x => x ?? new List<ValuesOption>())
                 .ToDictionary(x => x.id.ToString() ?? string.Empty, x => x);
 
             var ranges = _product?.options?
                 .Where(x => x.range_gradations is not null && x.range_gradations.Count > 0)
-                .Select(x => x.range_gradations).SelectMany(x => x)
+                .Select(x => x.range_gradations).SelectMany(x => x ?? new List<RangeGradation>())
                 .ToDictionary(x => x.id.ToString() ?? string.Empty, x => x);
 
             var valuesOptionsPayloads = new Dictionary<string, Dictionary<string, string>>();
             var rangeGradationPayloads = new Dictionary<string, Dictionary<string, string>>();
 
-            if (values.Count != valueOptions.Count())
+            if (values?.Count != valueOptions.Count())
                 throw new Exception("Error! Check value options, prices must always follow with next symbols '$' or '%' without any white-spaces.");
 
-            if (ranges.Count != rangeGradations.Count())
+            if (ranges?.Count != rangeGradations.Count())
                 throw new Exception("Error! Check range gradations, prices must always follow with next symbols '$' and never be free or '%' without any white-spaces.");
 
             if (values is not null)
@@ -194,6 +199,19 @@ namespace LevelPupper__Parser.dlls.API
                         else if (i.Value.price_type == 2 && i.Value.price_amount == decimal.Parse(newValueOption.Groups["price"].Value)) continue;
                         else if (i.Value.price_type == 3 && i.Value.price_percent == decimal.Parse(newValueOption.Groups["price"].Value)) continue;
                     }
+
+                    string priceBefore = "Free";
+
+                    if (i.Value.price_amount is not null) priceBefore = i.Value.price_amount.ToString() + "$";
+                    else if (i.Value.price_percent is not null) priceBefore = i.Value.price_percent.ToString() + "%";
+
+                    string priceAfter = "Free";
+
+                    if (newValueOption.Groups["priceType"].Value != "Free")
+                        priceAfter = newValueOption.Groups["price"].Value + newValueOption.Groups["priceType"].Value;
+
+                    rtfText = Regex.Replace(rtfText ?? string.Empty, $@"""{url_ValueOption}{i.Value.id}""(?:.*?)-\s*(?:[-]?\d+([.]\d+)?)?(?:[$%]|Free)"
+                        , $@"""{url_ValueOption}{i.Value.id}""}}{{\fldrslt {i.Value.title}}}}} - {priceBefore} -> {priceAfter}");
 
                     Dictionary<string, string> payload = new();
 
@@ -234,6 +252,15 @@ namespace LevelPupper__Parser.dlls.API
                         throw new Exception("Error! Check range gradations, prices must always follow with next symbols '$' and never be free or '%' without any white-spaces.");
 
                     if (i.Value.price == decimal.Parse(newValueOption.Groups["price"].Value)) continue;
+
+                    string priceBefore = "Free";
+
+                    if (i.Value.price is not null) priceBefore = i.Value.price.ToString() + "$";                    
+
+                    string priceAfter = newValueOption.Groups["price"].Value + newValueOption.Groups["priceType"].Value;
+
+                    rtfText = Regex.Replace(rtfText ?? string.Empty, $@"""{url_RangeGradation}{i.Value.id}""(?:.*?)-\s*(?:[-]?\d+([.]\d+)?)?(?:[$%]|Free)"
+                        , $@"""{url_RangeGradation}{i.Value.id}""}}{{\fldrslt {i.Value.title}}}}} - {priceBefore} -> {priceAfter}");
 
                     Dictionary<string, string> payload = new();
 
@@ -280,13 +307,13 @@ namespace LevelPupper__Parser.dlls.API
                 var loginData = new Dictionary<string, string>
                 {
                     { "csrfmiddlewaretoken", csrfToken },
-                    { "username", login },
-                    { "password", password },
+                    { "username", login ?? string.Empty },
+                    { "password", password ?? string.Empty },
                     { "next", "/admin/" }
                 };
 
                 HttpContent loginContent = new FormUrlEncodedContent(loginData);
-                client.DefaultRequestHeaders.Referrer = new Uri(url_Login);
+                client.DefaultRequestHeaders.Referrer = new Uri(url_Login ?? string.Empty);
 
                 HttpResponseMessage loginResponse = await client.PostAsync(url_Login, loginContent);
 
@@ -295,14 +322,16 @@ namespace LevelPupper__Parser.dlls.API
                 #region API Calls
                 if (valuesOptionsPayloads.Count > 0)
                     foreach (var i in valuesOptionsPayloads)
-                        await POST(client, url_ValueOption, i.Key, i.Value);
+                        await POST(client, url_ValueOption ?? string.Empty, i.Key, i.Value);
 
                 if (rangeGradationPayloads.Count > 0)
                     foreach (var i in rangeGradationPayloads)
-                        await POST(client, url_RangeGradation, i.Key, i.Value);
+                        await POST(client, url_RangeGradation ?? string.Empty, i.Key, i.Value);
                 #endregion
             }
             #endregion
+
+            return rtfText ?? string.Empty;
 
             string GetTypeID(string type)
             {
@@ -344,9 +373,7 @@ namespace LevelPupper__Parser.dlls.API
 
                 HttpResponseMessage postResponse = await client.PostAsync(fullurl, postContent);
 
-                if (postResponse.IsSuccessStatusCode)
-                    RTConsole.Write($"{id} - is succecfully changed.", Color.Green);
-                else
+                if (!postResponse.IsSuccessStatusCode)
                     throw new Exception($"POST request failed with status code: {postResponse.StatusCode}");
             }
         }

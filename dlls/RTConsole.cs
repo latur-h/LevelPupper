@@ -19,6 +19,8 @@ namespace LevelPupper__Parser.dlls
 
             console?.AppendText($"{DateTime.Now.ToShortTimeString()} | {text}\r");
 
+            console.SelectionColor = Color.Gray;
+
             console?.ScrollToCaret();
         }
     }
