@@ -57,6 +57,8 @@ namespace LevelPupper__Parser
                 rtConsole.ReadOnly = true;
 
                 RTConsole.Write("Oops! Something went wrong, I couldn`t find an importat files. System destruction is proceed...");
+
+                return;
             }
 
             parser = new(this, Handle);
@@ -66,6 +68,8 @@ namespace LevelPupper__Parser
                 label_Version.Text = $"{File.ReadAllText(@"../../../version.txt")}";
             }
             catch { RTConsole.Write("Version control file is not found. This message can be ignored.", Color.Red); }
+
+            
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -108,17 +112,19 @@ namespace LevelPupper__Parser
         {
             try
             {
+                button_Save.Enabled = false;
+
                 rtConsole.Rtf = await _pupser.Save(rtConsole.Text);
 
                 RTConsole.Write("Pip");
                 RTConsole.Write("Price change is compelete.", Color.Green);
-
-                button_Save.Enabled = false;
             }
             catch (Exception ex)
             {
                 RTConsole.Write("Pip");
                 RTConsole.Write($"Price change is failed with next message: {ex.Message}", Color.Red);
+
+                button_Save.Enabled = true;
             }
         }
     }

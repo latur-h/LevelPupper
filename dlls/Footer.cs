@@ -39,7 +39,9 @@ namespace LevelPupper__Parser.dlls
         }
         private void Init()
         {
-            string? text = ParseHtml(doc.DocumentNode);
+            string? text = ParseHtml(doc.DocumentNode);            
+
+            RTConsole.Write(text);
 
             _cleaner(ref text);
 
@@ -227,7 +229,12 @@ namespace LevelPupper__Parser.dlls
 
             Dictionary<string, string> boostingMethods = new();
 
-            foreach (Match i in RegularExp.GetBoosting_Methods_Items().Matches(text))
+            var match = RegularExp.GetBoosting_Methods_Items().Matches(text);
+
+            if (match is null || match.Count == 0)
+                throw new Exception("Boosting Methods was not found. Check the name or structure if this a mistake. Block is ignored.");
+
+            foreach (Match i in match)
                 boostingMethods.Add(i.Groups[1].Value.ToLower() != "piloted" ? "Self-Play" : i.Groups[1].Value, Regex.Replace(i.Groups[2].Value, @"\s*$", string.Empty));
 
             return boostingMethods;

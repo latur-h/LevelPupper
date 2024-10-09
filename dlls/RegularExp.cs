@@ -31,21 +31,21 @@ namespace LevelPupper__Parser.dlls
         #endregion
 
         #region Footer
-        [GeneratedRegex(@"<h2>(?>\s*)Requirements(?>\s*)<\/h2>(?>\s*)(.*?)(?>\s*)(?=<h[23]>|(?>\s*)$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"<h2>(?>\s*)(?:<strong>)?Requirements[:]?(?:</strong>)?(?>\s*)<\/h2>(?>\s*)(.*?)(?>\s*)(?=<h[23]>|(?>\s*)$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetRequirements();
-        [GeneratedRegex(@"<h2>(?>\s*)Additional\sOptions(?>\s*)<\/h2>(?>\s*)(.*?)(?>\s*)(?=<h[23]>|(?>\s*)$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"<h2>(?>\s*)(?:<strong>)?Additional\sOption[s]?[:]?(?:</strong>)?(?>\s*)<\/h2>(?>\s*)(.*?)(?>\s*)(?=<h[23]>|(?>\s*)$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetAdditional_Options();
         [GeneratedRegex(@"<ul>(?>\s*)(?:.*?)(?>\s*)</ul>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetAdditional_Options_Feature_List();
         [GeneratedRegex(@"<li>(?>\W)*(.*?)(?:\s*)(?::|\u2013)(?:\s)*(.*?)(?>\s)*<\/li>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetAdditional_Options_Feature_List_Items();
-        [GeneratedRegex(@"<h[23]>(?>\s*)Boosting\sMethod[s]?(?>\s*)<\/h[23]>(?>\s*)(.*?)(?>\s*)(?=<h[23]>|(?>\s*)$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"<h[23]>(?>\s*)(?:<strong>)?Boosting\sMethod[s]?[:]?(?:</strong>)?(?>\s*)<\/h[23]>(?>\s*)(.*?)(?>\s*)(?=<h[23]>|(?>\s*)$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetBoosting_Methods();
         [GeneratedRegex(@"<li>(?>\W)*(piloted|self[\W]*?play)(?>[\W])*(.*?)<\/li>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetBoosting_Methods_Items();
-        [GeneratedRegex(@"<h2>(?>\s*)(About\s.*?)(?>\s*)<\/h2>(.*?)(?=<h[23]>(?>\s*)FAQ[s]?(?>\s*)<\/h[23]>|(?>\s*)$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"<h2>(?>\s*)(?:<strong>)?(About\s.*?)(?:</strong>)?(?>\s*)<\/h2>(.*?)(?=<h[23]>(?>\s*)FAQ[s]?(?>\s*)<\/h[23]>|(?>\s*)$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetAbout();
-        [GeneratedRegex(@"<h[23]>(?>\s*)FAQ[s]?(?>\s*)<\/h[23]>(?>\s*)(.*?)(?>\s*)$", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        [GeneratedRegex(@"<h[23]>(?>\s*)(?:<strong>)?FAQ[s]?(?:</strong>)?(?>\s*)<\/h[23]>(?>\s*)(.*?)(?>\s*)$", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetFAQs();
         [GeneratedRegex(@"<h3>(?>[\W])*?(.*?)<\/h3>(?=\s)*?(?>[\W]*?)(.*?)((?=<h3>)|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetFAQs_Items();
