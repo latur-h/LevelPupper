@@ -22,6 +22,10 @@ namespace LevelPupper__Parser.dlls
         public static partial Regex GetUnnecessaryFooter();
 
         #region Header
+        [GeneratedRegex(@"(?:(?<=<p>)description:\s*(?'description'.*?)(?=</p>))|
+    (?:(?<=<p>)title:\s*(?'title'.*?)(?=</p>))|
+    (?:(?<=<p>)url:\s*(?'url'.*?)(?=</p>))", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled)]
+        public static partial Regex GetSEO();
         [GeneratedRegex(@"<h1>(?>\s*)([^<]+)(?>\s*)<\/h1>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]
         public static partial Regex GetTitle();
         [GeneratedRegex(@"<p>(?>\s*)([^<]+)(?>\s*)<\/p>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled)]

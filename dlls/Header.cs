@@ -1,4 +1,6 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.FileSystemGlobbing;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +54,7 @@ namespace LevelPupper__Parser.dlls
 
             try
             {
-                var seo = GetSEO(doc);
+                var seo = GetSEO(doc, ref text);
 
                 _seoDescription = seo.Item1;
                 _seoTitle = seo.Item2;
@@ -208,11 +210,45 @@ namespace LevelPupper__Parser.dlls
 
             input = RegularExp.GetRewards().Replace(input, string.Empty);
         }
-        private Tuple<string, string, string> GetSEO(HtmlAgilityPack.HtmlDocument doc)
+        private Tuple<string, string, string> GetSEO(HtmlAgilityPack.HtmlDocument doc, ref string? input)
         {
             var rows = doc.DocumentNode.SelectNodes("//div//table//tr");
 
-            if (rows is null || rows.Count == 0) throw new Exception("SEO was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+            if (rows is null || rows.Count == 0)
+            {
+                if (input is null)
+                    throw new Exception("SEO was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+
+                string description = string.Empty;
+                string title = string.Empty;
+                string url = string.Empty;
+
+                MatchCollection matches = RegularExp.GetSEO().Matches(input);
+
+                foreach (Match match in matches)
+                {
+                    if (match.Groups["description"].Success)
+                    {
+                        description = match.Groups["description"].Value;
+                    }
+                    if (match.Groups["title"].Success)
+                    {
+                        title = match.Groups["title"].Value;
+                    }
+                    if (match.Groups["url"].Success)
+                    {
+                        url = match.Groups["url"].Value;
+                    }
+
+                    input = input.Replace(match.Value, string.Empty);
+                }
+
+                if (string.IsNullOrEmpty(description) || string.IsNullOrEmpty(title) || string.IsNullOrEmpty(url))
+                    throw new Exception("SEO was not found. Check the structure or formatting settings if this a mistake. Block is ignored.");
+
+                return new Tuple<string, string, string>(description, title, url.Split('/').Where(x => x.Length > 0).Last());
+            }
+            
 
             List<string> seoTable = new();
 
