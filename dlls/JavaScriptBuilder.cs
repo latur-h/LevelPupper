@@ -39,20 +39,20 @@ namespace LevelPupper__Parser.dlls
                     {
                         StringBuilder js = new(reader.ReadToEnd());
 
-                        js.AppendLine($"insertStaticText(" +
+                        js.AppendLine($"try{{ insertStaticText(" +
                             $"\"{isNull(header._defaultPossition, "1")}\"," +
                             $"\"{isNull(header._seoURL)}\"," +
                             $"\"{isNull(header._preview)}\"," +
                             $"\"{isNull(header._title)}\"," +
                             $"\"{isNull(header._seoTitle)}\"," +
                             $"\"{isNull(header._seoDescription)}\"" +
-                            $");");
+                            $"); }} catch {{}}");
 
-                        js.AppendLine($"await insertText(" +
+                        js.AppendLine($"try{{ await insertText(" +
                             $"\"{isNull(header._utp)}\"," +
                             $"\"{isNull(header._description)}\"," +
                             $"\"{isNull(header._rewards)}\"" +
-                            $");");
+                            $"); }} catch {{}}");
 
                         return js.ToString();
                     }
@@ -64,33 +64,33 @@ namespace LevelPupper__Parser.dlls
                     {
                         StringBuilder js = new(reader.ReadToEnd());
 
-                        js.AppendLine($"insertStaticText(\"{isNull(footer._aboutTitle)}\");");
+                        js.AppendLine($"try{{ insertStaticText(\"{isNull(footer._aboutTitle)}\"); }} catch {{}}");
 
-                        js.AppendLine($"await insertText(" +
+                        js.AppendLine($"try{{ await insertText(" +
                             $"\"{isNull(footer._requirements)}\"," +
                             $"\"{isNull(footer._additionalOptions)}\"," +
                             $"\"{isNull(footer._aboutText)}\"" +
-                            $");");
+                            $"); }} catch {{}}");
 
-                        js.AppendLine("changeSelectElement(\"id_description_elements-2-type\", \"0\")");
-                        js.AppendLine($"changeSelectElement(\"id_description_elements-6-type\", \"{(footer.boostingMethods is null ? "" : footer.boostingMethods.Count.ToString())}\");");
+                        js.AppendLine("try{ changeSelectElement(\"id_description_elements-2-type\", \"0\"); } catch {}");
+                        js.AppendLine($"try{{ changeSelectElement(\"id_description_elements-6-type\", \"{(footer.boostingMethods is null ? "" : footer.boostingMethods.Count.ToString())}\"); }} catch {{}}");
 
                         if (isAboutNullifier ?? false && footer._aboutTitle is null && footer._aboutText is null)
                         {
                             js.AppendLine($"document.getElementById(\"id_description_elements-13-show_title\").checked = false;");
                             js.AppendLine($"document.getElementById(\"id_description_elements-14-show_title\").checked = false;");
 
-                            js.AppendLine($"changeSelectElement(\"id_description_elements-13-type\", \"0\");");
-                            js.AppendLine($"changeSelectElement(\"id_description_elements-14-type\", \"0\");");
+                            js.AppendLine($"try{{ changeSelectElement(\"id_description_elements-13-type\", \"0\");");
+                            js.AppendLine($"try{{ changeSelectElement(\"id_description_elements-14-type\", \"0\");");
                         }
 
                         int count = 1;
                         foreach (var i in footer.boostingMethods is null ? new Dictionary<string, string>() : footer.boostingMethods)
-                            js.AppendLine($"await executeFunction(\"#add_id_description_elements-6-elements\", {count++}, \"{i.Key}\", \"{i.Value}\");");
+                            js.AppendLine($"try{{ await executeFunction(\"#add_id_description_elements-6-elements\", {count++}, \"{i.Key}\", \"{i.Value}\"); }} catch {{}}");
 
                         count = 1;
                         foreach (var i in footer.faqs is null ? new Dictionary<string, string>() : footer.faqs)
-                            js.AppendLine($"await executeFunction(\"#add_id_description_elements-16-elements\", {count++}, \"{i.Key}\", \"{i.Value}\");");
+                            js.AppendLine($"try{{ await executeFunction(\"#add_id_description_elements-16-elements\", {count++}, \"{i.Key}\", \"{i.Value}\"); }} catch {{}}");
 
                         return js.ToString();
                     }
@@ -102,17 +102,17 @@ namespace LevelPupper__Parser.dlls
                     {
                         StringBuilder js = new(reader.ReadToEnd());
 
-                        js.AppendLine($"insertStaticText(" +
+                        js.AppendLine($"try{{ insertStaticText(" +
                             $"\"{isNull(category._seoURL)}\"," +
                             $"\"{isNull(category._title)}\"," +
                             $"\"{isNull(category._seoTitle)}\"," +
                             $"\"{isNull(category._seoDescription)}\"" +
-                            $");");
+                            $"); }} catch {{}}");
 
-                        js.AppendLine($"await insertText(" +
+                        js.AppendLine($"try{{ await insertText(" +
                             $"\"{isNull(category._shortDescription)}\"," +
                             $"\"{isNull(category._pageDescription)}\"" +
-                            $");");
+                            $"); }} catch {{}}");
 
                         return js.ToString();
                     }

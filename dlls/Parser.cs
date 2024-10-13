@@ -48,20 +48,28 @@ namespace LevelPupper__Parser.dlls
 
                 HtmlAgilityPack.HtmlDocument doc = new();
                 doc.LoadHtml(text);
-
+                
                 text = ParseHtml(doc.DocumentNode);
                 text = HttpUtility.HtmlDecode(text);
 
-                //RTConsole.Write(text);
+                text = text.Replace(Regex.Match(text, @"(.*?)(<|$)", RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, string.Empty);
 
                 if (Regex.IsMatch(text, @"insertStaticText"))
                     return;
                 else if (_form.cb_Category.Checked)
-                    currentText = CategoryJS();
+                { 
+                    consoleCleaner(); 
+                    currentText = CategoryJS(); }
                 else if (RegularExp.isHeader().IsMatch(text))
+                {
+                    consoleCleaner();
                     currentText = HeaderJS();
+                }
                 else if (RegularExp.isFooter().IsMatch(text))
+                {
+                    consoleCleaner(); 
                     currentText = FooterJS();
+                }
                 else
                     return;
 
@@ -72,13 +80,28 @@ namespace LevelPupper__Parser.dlls
 
                 _form.Invoke(() => Clipboard.SetText(currentText, TextDataFormat.UnicodeText));
             }
-            catch //(Exception ex)
+            catch
             {
-                //RTConsole.Write(ex.ToString());
+                
             }
             finally
             {
+                _form.rtConsole.ReadOnly = true;
+
                 GC.Collect();
+            }
+
+            void consoleCleaner()
+            {
+                if (_form._pupser != null)
+                {
+                    _form._pupser.Dispose();
+                    _form._pupser = null;
+
+                    _form.rtConsole.Clear();
+                    _form.rtConsole.ReadOnly = true;
+                    RTConsole.Write("You`re now in 'Parse' mode. Typing in console is restricted.\n");
+                }
             }
         }
         private string ParseHtml(HtmlNode node)

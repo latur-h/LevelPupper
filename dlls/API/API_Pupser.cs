@@ -28,6 +28,9 @@ namespace LevelPupper__Parser.dlls.API
         private Product? _product { get; set; }
         private string? rtfText { get; set; }
 
+        private string game;
+        private string codename;
+
         public API_Pupser(string game, string codename, API_Pupser_Configuration pupser)
         {
             login = pupser.login;
@@ -41,10 +44,11 @@ namespace LevelPupper__Parser.dlls.API
             url_RangeGradation = pupser.url_RangeGradation;
             url_ValueOption = pupser.url_ValueOption;
 
-            Init(game, codename);
+            this.game = game;
+            this.codename = codename;
         }
 
-        private void Init(string game, string codename)
+        public bool Init()
         {
             using (HttpClient client = new HttpClient())
             {
@@ -74,12 +78,16 @@ namespace LevelPupper__Parser.dlls.API
                     }
                     else
                     {
-                        RTConsole.Write("Request failed with status code: " + response.StatusCode, Color.Red);
+                        throw new Exception();
                     }
+
+                    return true;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    RTConsole.Write("Error: " + ex.Message, Color.Red);
+                    RTConsole.Write("Error! Check a game or codename and try again.", Color.Red);
+
+                    return false;
                 }
             }
         }

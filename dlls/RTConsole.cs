@@ -17,11 +17,11 @@ namespace LevelPupper__Parser.dlls
 
             console.SelectionColor = (Color)(color is null ? Color.LightGray : color);
 
-            console?.AppendText($"{DateTime.Now.ToShortTimeString()} | {text}\r");
+            console.AppendText($"{DateTime.Now.ToShortTimeString()} | {text}\r");
 
             console.SelectionColor = Color.Gray;
 
-            console?.ScrollToCaret();
+            console.ScrollToCaret();
         }
     }
 }

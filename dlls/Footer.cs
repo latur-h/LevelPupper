@@ -41,8 +41,6 @@ namespace LevelPupper__Parser.dlls
         {
             string? text = ParseHtml(doc.DocumentNode);            
 
-            RTConsole.Write(text);
-
             _cleaner(ref text);
 
             if (string.IsNullOrEmpty(text)) throw new Exception("Invalid text!");
@@ -102,6 +100,7 @@ namespace LevelPupper__Parser.dlls
                 if (string.IsNullOrEmpty(input)) return;
 
                 input = HttpUtility.HtmlDecode(input);
+                input = input.Replace(Regex.Match(input, @"(.*?)(<|$)", RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, string.Empty);
                 input = RegularExp.GetUnnecessarySpaces().Replace(input, " ");
                 input = RegularExp.GetUnnecessaryElements().Replace(input, string.Empty);
                 input = input.Replace("\"", "\\\"");

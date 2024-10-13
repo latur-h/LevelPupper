@@ -13,17 +13,22 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace LevelPupper__Parser
 {
     public partial class Form1 : Form
     {
         private Parser? parser;
-        private API_Pupser _pupser;
+        internal API_Pupser? _pupser;
+
+        private Dictionary<string, string> games;
 
         public Form1()
         {
             InitializeComponent();
+
+            comboBox_Game.FlatStyle = FlatStyle.System;
         }
         protected override void WndProc(ref Message m)
         {
@@ -56,20 +61,36 @@ namespace LevelPupper__Parser
                 rtConsole.Enabled = true;
                 rtConsole.ReadOnly = true;
 
-                RTConsole.Write("Oops! Something went wrong, I couldn`t find an importat files. System destruction is proceed...");
+                RTConsole.Write("Oops! Something went wrong, I couldn`t find an importat files. All functions are dissabled.");
 
                 return;
             }
 
             parser = new(this, Handle);
 
+            games = new()
+            {
+                { "Path of Exile", "path-of-exile" },
+                { "World of Warcraft", "wow" },
+                { "Desctiny 2", "d2" },
+                { "WoW Cataclysm", "wow-cataclysm" },
+                { "WoW SoD", "season-of-discovery" },
+                { "Apex", "apex" },
+                { "Diablo IV", "d4" },
+                { "Last Epoch", "last-epoch" },
+                { "The First Descendant", "the-first-descendant" }
+            };
+
+            foreach (var i in games)
+                comboBox_Game.Items.Add(i.Key);
+
             try
             {
-                label_Version.Text = $"{File.ReadAllText(@"../../../version.txt")}";
+                label_Version.Text = $"{File.ReadAllText(@"../../../version.txt")} © Latur";
             }
             catch { RTConsole.Write("Version control file is not found. This message can be ignored.", Color.Red); }
 
-            
+
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -101,9 +122,24 @@ namespace LevelPupper__Parser
 
         private void button_Execute_Click(object sender, EventArgs e)
         {
-            _pupser = new(comboBox_Game.Text, textBox_Codename.Text, Config.GetAPI());
+            if (string.IsNullOrEmpty(comboBox_Game.Text) || string.IsNullOrEmpty(textBox_Codename.Text))
+            {
+                if (string.IsNullOrEmpty(comboBox_Game.Text))
+                    RTConsole.Write("Error! Choose a game to proceed.", Color.Red);
 
+                if (string.IsNullOrEmpty(textBox_Codename.Text))
+                    RTConsole.Write("Error! Write a codename to proceed.", Color.Red);
+                return;
+            }
+
+            _pupser = new(games[comboBox_Game.Text], textBox_Codename.Text, Config.GetAPI());
+
+            if (!_pupser.Init())
+                return;
+
+            rtConsole.Clear();
             rtConsole.Rtf = _pupser.GetServices();
+            rtConsole.ReadOnly = false;
 
             button_Save.Enabled = true;
         }
@@ -115,6 +151,9 @@ namespace LevelPupper__Parser
                 button_Save.Enabled = false;
 
                 rtConsole.Rtf = await _pupser.Save(rtConsole.Text);
+                _pupser = null;
+
+                rtConsole.ReadOnly = true;
 
                 RTConsole.Write("Pip");
                 RTConsole.Write("Price change is compelete.", Color.Green);
@@ -126,6 +165,24 @@ namespace LevelPupper__Parser
 
                 button_Save.Enabled = true;
             }
+        }
+
+        private void comboBox_Game_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void comboBox_Game_DropDownClosed(object sender, EventArgs e)
+        {
+            comboBox_Game.SelectionStart = 0;
+            comboBox_Game.SelectionLength = 0;
+
+            this.ActiveControl = null;
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            rtConsole.Size = new Size(this.Width - 250, this.Height - 70);
         }
     }
 }
