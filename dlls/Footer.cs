@@ -100,7 +100,11 @@ namespace LevelPupper__Parser.dlls
                 if (string.IsNullOrEmpty(input)) return;
 
                 input = HttpUtility.HtmlDecode(input);
+
+                input = Regex.Replace(input, @"’", "'");
+
                 input = input.Replace(Regex.Match(input, @"(.*?)(<|$)", RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, string.Empty);
+
                 input = RegularExp.GetUnnecessarySpaces().Replace(input, " ");
                 input = RegularExp.GetUnnecessaryElements().Replace(input, string.Empty);
                 input = input.Replace("\"", "\\\"");

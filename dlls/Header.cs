@@ -113,6 +113,8 @@ namespace LevelPupper__Parser.dlls
 
                 input = HttpUtility.HtmlDecode(input);
 
+                input = Regex.Replace(input, @"’", "'");
+
                 input = input.Replace(Regex.Match(input, @"(.*?)(<|$)", RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, string.Empty);
 
                 if (RegularExp.isFooter().IsMatch(input))
