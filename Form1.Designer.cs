@@ -43,6 +43,7 @@
             label2 = new Label();
             button_Save = new Button();
             panel_Options = new Panel();
+            cb_Suppress = new CheckBox();
             panel_Options.SuspendLayout();
             SuspendLayout();
             // 
@@ -177,6 +178,7 @@
             // panel_Options
             // 
             panel_Options.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            panel_Options.Controls.Add(cb_Suppress);
             panel_Options.Controls.Add(cb_Category);
             panel_Options.Controls.Add(button_Save);
             panel_Options.Controls.Add(button_Execute);
@@ -190,8 +192,18 @@
             panel_Options.Controls.Add(comboBox_Game);
             panel_Options.Location = new Point(902, 12);
             panel_Options.Name = "panel_Options";
-            panel_Options.Size = new Size(200, 409);
+            panel_Options.Size = new Size(200, 530);
             panel_Options.TabIndex = 14;
+            // 
+            // cb_Suppress
+            // 
+            cb_Suppress.AutoSize = true;
+            cb_Suppress.Location = new Point(24, 444);
+            cb_Suppress.Name = "cb_Suppress";
+            cb_Suppress.Size = new Size(73, 19);
+            cb_Suppress.TabIndex = 14;
+            cb_Suppress.Text = "Suppress";
+            cb_Suppress.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -231,5 +243,6 @@
         private Label label2;
         private Button button_Save;
         public Panel panel_Options;
+        public CheckBox cb_Suppress;
     }
 }

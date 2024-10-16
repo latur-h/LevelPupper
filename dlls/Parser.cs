@@ -42,9 +42,12 @@ namespace LevelPupper__Parser.dlls
         {
             try
             {
+                if (_form.cb_Suppress.Checked) return;
                 if (!_form.Invoke(() => Clipboard.ContainsText(TextDataFormat.Text))) return;
 
                 string text = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
+
+                RTConsole.Write(text);
 
                 HtmlAgilityPack.HtmlDocument doc = new();
                 doc.LoadHtml(text);
@@ -69,6 +72,11 @@ namespace LevelPupper__Parser.dlls
                 {
                     consoleCleaner(); 
                     currentText = FooterJS();
+                }
+                else if (RegularExp.GetSEO().IsMatch(text))
+                {
+                    consoleCleaner();
+                    currentText = HeaderJS(isSEO: true);
                 }
                 else
                     return;
@@ -133,11 +141,11 @@ namespace LevelPupper__Parser.dlls
 
             return result.ToString();
         }
-        private string HeaderJS()
+        private string HeaderJS(bool? isSEO = null)
         {
             string html = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
 
-            using (Header header = new(html, defaultPossition: GetDefaultPossition()))
+            using (Header header = new(html, defaultPossition: GetDefaultPossition(), isSEO: isSEO))
                 return builder.Build(JavaScriptBuilder.Script.General, header: header);
         }
         private string? GetDefaultPossition()

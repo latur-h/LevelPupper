@@ -30,7 +30,7 @@ namespace LevelPupper__Parser.dlls
 
         private readonly HtmlAgilityPack.HtmlDocument doc;
 
-        public Header(string html, string? defaultPossition = null)
+        public Header(string html, string? defaultPossition = null, bool? isSEO = null)
         {
             _defaultPossition = defaultPossition;
 
@@ -39,10 +39,10 @@ namespace LevelPupper__Parser.dlls
 
             this.doc = doc;
 
-            Init();
+            Init(isSEO);
         }
 
-        private void Init()
+        private void Init(bool? isSEO = null)
         {
             string? text = ParseHtml(doc.DocumentNode);
 
@@ -50,19 +50,25 @@ namespace LevelPupper__Parser.dlls
 
             RemoveSEO(ref text);
 
+            RTConsole.Write(text);
+
             RTConsole.Write("Start header parsing...");
 
-            try
-            {
-                var seo = GetSEO(doc, ref text);
+            if (isSEO is not null)
+                try
+                {
+                    var seo = GetSEO(doc, ref text);
 
-                _seoDescription = seo.Item1;
-                _seoTitle = seo.Item2;
-                _seoURL = seo.Item3;
+                    _seoDescription = seo.Item1;
+                    _seoTitle = seo.Item2;
+                    _seoURL = seo.Item3;
 
-                RTConsole.Write("Seo have been succecfully parsed.", Color.Green);
-            }
-            catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
+                    RTConsole.Write("Seo have been succecfully parsed.", Color.Green);
+
+                    RTConsole.Write("Header parse is complete.\n");
+                    return;
+                }
+                catch (Exception e) { RTConsole.Write(e.Message, Color.Red); }
 
             try
             {
@@ -96,7 +102,7 @@ namespace LevelPupper__Parser.dlls
                 _description = descriptions.Item1;
                 _utp = descriptions.Item2;
 
-                if(!string.IsNullOrEmpty(_utp))
+                if (!string.IsNullOrEmpty(_utp))
                     RTConsole.Write("UTP have been succecfully parsed.", Color.Green);
 
                 if (!string.IsNullOrEmpty(_description))
