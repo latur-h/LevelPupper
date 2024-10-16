@@ -50,8 +50,6 @@ namespace LevelPupper__Parser.dlls
 
             RemoveSEO(ref text);
 
-            RTConsole.Write(text);
-
             RTConsole.Write("Start header parsing...");
 
             if (isSEO is not null)

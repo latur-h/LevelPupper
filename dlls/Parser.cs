@@ -47,8 +47,6 @@ namespace LevelPupper__Parser.dlls
 
                 string text = _form.Invoke(() => Clipboard.GetText(TextDataFormat.Html));
 
-                RTConsole.Write(text);
-
                 HtmlAgilityPack.HtmlDocument doc = new();
                 doc.LoadHtml(text);
                 
