@@ -77,11 +77,11 @@ namespace LevelPupper__Parser.dlls
 
                         if (isAboutNullifier ?? false && footer._aboutTitle is null && footer._aboutText is null)
                         {
-                            js.AppendLine($"document.getElementById(\"id_description_elements-13-show_title\").checked = false;");
-                            js.AppendLine($"document.getElementById(\"id_description_elements-14-show_title\").checked = false;");
+                            js.AppendLine($"try{{ document.getElementById(\"id_description_elements-13-show_title\").checked = false; }} catch {{}}");
+                            js.AppendLine($"try{{ document.getElementById(\"id_description_elements-14-show_title\").checked = false; }} catch {{}}");
 
-                            js.AppendLine($"try{{ changeSelectElement(\"id_description_elements-13-type\", \"0\");");
-                            js.AppendLine($"try{{ changeSelectElement(\"id_description_elements-14-type\", \"0\");");
+                            js.AppendLine($"try{{ changeSelectElement(\"id_description_elements-13-type\", \"0\"); }} catch {{}}");
+                            js.AppendLine($"try{{ changeSelectElement(\"id_description_elements-14-type\", \"0\"); }} catch {{}}");
                         }
 
                         int count = 1;
