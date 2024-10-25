@@ -14,6 +14,7 @@ using System.Web;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Header = LevelPupper__Parser.dlls.Header;
 
 namespace LevelPupper__Parser
 {
@@ -68,18 +69,7 @@ namespace LevelPupper__Parser
 
             parser = new(this, Handle);
 
-            games = new()
-            {
-                { "Path of Exile", "path-of-exile" },
-                { "World of Warcraft", "wow" },
-                { "Desctiny 2", "d2" },
-                { "WoW Cataclysm", "wow-cataclysm" },
-                { "WoW SoD", "season-of-discovery" },
-                { "Apex", "apex" },
-                { "Diablo IV", "d4" },
-                { "Last Epoch", "last-epoch" },
-                { "The First Descendant", "the-first-descendant" }
-            };
+            games = Games.GetCodenames();
 
             foreach (var i in games)
                 comboBox_Game.Items.Add(i.Key);
@@ -183,6 +173,48 @@ namespace LevelPupper__Parser
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             rtConsole.Size = new Size(this.Width - 250, this.Height - 70);
+        }
+
+        private void button_SeleniumMode_Click(object sender, EventArgs e)
+        {
+            rtConsole.Clear();
+            rtConsole.ReadOnly = false;
+
+            cb_Suppress.Checked = true;
+
+            button_Run_SParse.Enabled = true;
+        }
+
+        private void button_Run_SParse_Click(object sender, EventArgs e)
+        {
+            button_Run_SParse.Enabled = false;
+
+            var urls = rtConsole.Text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Where(x => x.Contains("app.surferseo.com")).Distinct().ToDictionary(k => k, v => string.Empty);
+
+            if (urls is null || urls.Count < 1)
+            {
+                RTConsole.Write("Where surferSEO url?");
+
+                button_Run_SParse.Enabled = false;
+
+                return;
+            }
+
+            rtConsole.Clear();
+
+            SParse sparse = new(Config.GetAPI(), isSilent: cb_Silent.Checked, isForce: cb_Force.Checked);
+
+            urls = sparse.GetTextFromSurferSEO(urls);
+
+            foreach (var url in urls) 
+            {
+                Header header = new(url.Value, defaultPossition: string.IsNullOrEmpty(textBox_DefaultPossition.Text) ? null : textBox_DefaultPossition.Text);
+                Footer footer = new(url.Value);
+
+                sparse.AddNewItem(header, footer, comboBox_Game.Text);
+
+                RTConsole.Write("Succecfully completed!");
+            }
         }
     }
 }

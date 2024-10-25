@@ -103,7 +103,7 @@ namespace LevelPupper__Parser.dlls
 
                 input = Regex.Replace(input, @"’", "'");
 
-                input = input.Replace(Regex.Match(input, @"(.*?)(<|$)", RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, string.Empty);
+                //input = input.Replace(Regex.Match(input, @"(.*?)(<|$)", RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, string.Empty);
 
                 input = RegularExp.GetUnnecessarySpaces().Replace(input, " ");
                 input = RegularExp.GetUnnecessaryElements().Replace(input, string.Empty);
@@ -134,7 +134,7 @@ namespace LevelPupper__Parser.dlls
                             result.Append($"</{child.Name}>");
                             break;
                         case "span":
-                            if (child.ParentNode is not null && (child.ParentNode.Name == "li" || child.ParentNode.Name == "p") && child.Attributes["style"].Value.Contains("font-weight:700;"))
+                            if (child.ParentNode is not null && (child.ParentNode.Name == "li" || child.ParentNode.Name == "p") && child.Attributes["style"] is not null && child.Attributes["style"].Value.Contains("font-weight:700;"))
                             {
                                 result.Append($"<strong>");
                                 result.Append(ParseHtml(child));

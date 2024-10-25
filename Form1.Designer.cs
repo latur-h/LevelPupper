@@ -44,7 +44,13 @@
             button_Save = new Button();
             panel_Options = new Panel();
             cb_Suppress = new CheckBox();
+            button_Run_SParse = new Button();
+            cb_Force = new CheckBox();
+            button_SeleniumMode = new Button();
+            cb_Silent = new CheckBox();
+            panel1 = new Panel();
             panel_Options.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // rtConsole
@@ -74,7 +80,7 @@
             // 
             label_Version.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label_Version.AutoSize = true;
-            label_Version.Location = new Point(1028, 537);
+            label_Version.Location = new Point(1228, 537);
             label_Version.Name = "label_Version";
             label_Version.Size = new Size(0, 15);
             label_Version.TabIndex = 3;
@@ -190,9 +196,9 @@
             panel_Options.Controls.Add(cb_Nullifier);
             panel_Options.Controls.Add(cb_AdditionalOptions);
             panel_Options.Controls.Add(comboBox_Game);
-            panel_Options.Location = new Point(902, 12);
+            panel_Options.Location = new Point(1102, 12);
             panel_Options.Name = "panel_Options";
-            panel_Options.Size = new Size(200, 530);
+            panel_Options.Size = new Size(200, 488);
             panel_Options.TabIndex = 14;
             // 
             // cb_Suppress
@@ -205,18 +211,71 @@
             cb_Suppress.Text = "Suppress";
             cb_Suppress.UseVisualStyleBackColor = true;
             // 
+            // button_Run_SParse
+            // 
+            button_Run_SParse.Enabled = false;
+            button_Run_SParse.Location = new Point(40, 63);
+            button_Run_SParse.Name = "button_Run_SParse";
+            button_Run_SParse.Size = new Size(104, 29);
+            button_Run_SParse.TabIndex = 3;
+            button_Run_SParse.Text = "Run";
+            button_Run_SParse.UseVisualStyleBackColor = true;
+            button_Run_SParse.Click += button_Run_SParse_Click;
+            // 
+            // cb_Force
+            // 
+            cb_Force.AutoSize = true;
+            cb_Force.Location = new Point(109, 170);
+            cb_Force.Name = "cb_Force";
+            cb_Force.Size = new Size(55, 19);
+            cb_Force.TabIndex = 2;
+            cb_Force.Text = "Force";
+            cb_Force.UseVisualStyleBackColor = true;
+            // 
+            // button_SeleniumMode
+            // 
+            button_SeleniumMode.Location = new Point(40, 28);
+            button_SeleniumMode.Name = "button_SeleniumMode";
+            button_SeleniumMode.Size = new Size(104, 29);
+            button_SeleniumMode.TabIndex = 1;
+            button_SeleniumMode.Text = "Selenium Mode";
+            button_SeleniumMode.UseVisualStyleBackColor = true;
+            button_SeleniumMode.Click += button_SeleniumMode_Click;
+            // 
+            // cb_Silent
+            // 
+            cb_Silent.AutoSize = true;
+            cb_Silent.Location = new Point(16, 170);
+            cb_Silent.Name = "cb_Silent";
+            cb_Silent.Size = new Size(55, 19);
+            cb_Silent.TabIndex = 0;
+            cb_Silent.Text = "Silent";
+            cb_Silent.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(button_SeleniumMode);
+            panel1.Controls.Add(cb_Force);
+            panel1.Controls.Add(cb_Silent);
+            panel1.Controls.Add(button_Run_SParse);
+            panel1.Location = new Point(898, 12);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(198, 488);
+            panel1.TabIndex = 15;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Silver;
-            ClientSize = new Size(1114, 561);
+            ClientSize = new Size(1314, 561);
+            Controls.Add(panel1);
             Controls.Add(panel_Options);
             Controls.Add(label_Version);
             Controls.Add(rtConsole);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximumSize = new Size(3840, 2160);
-            MinimumSize = new Size(1130, 600);
+            MinimumSize = new Size(1330, 600);
             Name = "Form1";
             Text = "Level Pupper";
             FormClosing += Form1_FormClosing;
@@ -224,6 +283,8 @@
             SizeChanged += Form1_SizeChanged;
             panel_Options.ResumeLayout(false);
             panel_Options.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -244,5 +305,10 @@
         private Button button_Save;
         public Panel panel_Options;
         public CheckBox cb_Suppress;
+        private Button button_SeleniumMode;
+        public CheckBox cb_Silent;
+        public CheckBox cb_Force;
+        private Button button_Run_SParse;
+        public Panel panel1;
     }
 }

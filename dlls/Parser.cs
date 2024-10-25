@@ -92,10 +92,10 @@ namespace LevelPupper__Parser.dlls
             }
             finally
             {
-                _form.rtConsole.ReadOnly = true;
-
                 GC.Collect();
             }
+
+            _form.rtConsole.ReadOnly = true;
 
             void consoleCleaner()
             {
