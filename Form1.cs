@@ -172,7 +172,7 @@ namespace LevelPupper__Parser
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            rtConsole.Size = new Size(this.Width - 250, this.Height - 70);
+            rtConsole.Size = new Size(this.Width - 450, this.Height - 70);
         }
 
         private void button_SeleniumMode_Click(object sender, EventArgs e)

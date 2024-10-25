@@ -254,6 +254,7 @@
             // 
             // panel1
             // 
+            panel1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             panel1.Controls.Add(button_SeleniumMode);
             panel1.Controls.Add(cb_Force);
             panel1.Controls.Add(cb_Silent);
