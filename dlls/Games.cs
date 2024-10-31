@@ -20,13 +20,13 @@ namespace LevelPupper__Parser.dlls
                 { "Path of Exile", new _game("path-of-exile", "13", "poe") },
                 { "Destiny 2", new _game("d2", "3", "destiny") },
                 { "World of Warcraft", new _game("wow", "1", "wow retail") },
-                { "Call of Duty: Black Ops 6", new _game("cod", "16", "cod") }
+                { "Call of Duty", new _game("cod", "16", "cod") }
             };
 
         public static Dictionary<string, string> GetCodenames() => games.ToDictionary(x => x.Key, x => x.Value.codename);
         public static string GetBoostSpec(string game) => games[game].boostSpec;
         public static string GetOptionValue(string game) => games[game].optionValue;
-        public static string GetCodename(string game) => games[game].codename; 
+        public static string GetCodename(string game) => games[game].codename;
     }
     internal class _game
     {

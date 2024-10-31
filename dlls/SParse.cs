@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,6 +20,9 @@ namespace LevelPupper__Parser.dlls
         private readonly bool? isSilent;
         private readonly bool? isForce;
 
+        private IWebDriver driver;
+        private WebDriverWait wait;
+
         ChromeOptions options;
 
         public SParse(API_Pupser_Configuration config, bool? isSilent = null, bool? isForce = null)
@@ -30,29 +34,38 @@ namespace LevelPupper__Parser.dlls
             this.isForce = isForce;
 
             options = GetOptions(this.isSilent);
+            driver = new ChromeDriver(options);
+
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
         }
-        public void AddNewItem(Header header, Footer footer, string game)
+        public async Task Init()
         {
-            using (IWebDriver driver = new ChromeDriver(options))
-            {
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
+            RTConsole.Write($"Loggin...");
 
-                Login(driver, wait);
+            await Task.Run(() => Login(driver, wait));
 
-                driver.Navigate().GoToUrl("https://api.levelupper.com/admin/game_services/gameservice/add/"); // Static
-                wait.Until(drv => ((IJavaScriptExecutor)drv).ExecuteScript("return document.readyState").ToString() == "complete");
+            RTConsole.Write($"Loggin is complete.", Color.Green);
+        }
+        public async Task AddNewItem(Header header, Footer footer, string game, string url)
+        {
+            RTConsole.Write($"{url} | Add new product...");
+            driver.Navigate().GoToUrl("https://api.levelupper.com/admin/game_services/gameservice/add/"); // Static
+            wait.Until(drv => ((IJavaScriptExecutor)drv).ExecuteScript("return document.readyState").ToString() == "complete");
 
-                string id = ApplyHeader(driver, wait, header, game);
+            RTConsole.Write($"{url} | Apply header...");
+            string id = await ApplyHeader(driver, wait, header, game);
+            RTConsole.Write($"{url} | Header is successfully inserted.");
 
-                ApplyDefaultDescriptionElements(driver, wait, game, id);
+            RTConsole.Write($"{url} | Apply Default description elements...");
+            await ApplyDefaultDescriptionElements(driver, wait, game, id);
+            RTConsole.Write($"{url} | Default description elements is inserted.");
 
-                driver.Navigate().GoToUrl($"https://api.levelupper.com/admin/game_services/gameservice/{id}/change/?_changelist_filters=game__id__exact%3D{Games.GetOptionValue(game)}"); // Variable
-                wait.Until(drv => ((IJavaScriptExecutor)drv).ExecuteScript("return document.readyState").ToString() == "complete");
+            driver.Navigate().GoToUrl($"https://api.levelupper.com/admin/game_services/gameservice/{id}/change/?_changelist_filters=game__id__exact%3D{Games.GetOptionValue(game)}"); // Variable
+            wait.Until(drv => ((IJavaScriptExecutor)drv).ExecuteScript("return document.readyState").ToString() == "complete");
 
-                ApplyFooter(driver, wait, footer, id, game);
-
-                driver.Quit();
-            }
+            RTConsole.Write($"{url} | Apply footer...");
+            await ApplyFooter(driver, wait, footer, id, game);
+            RTConsole.Write($"{url} | Footer is successfully inserted.");
         }
         private void Login(IWebDriver driver, WebDriverWait wait)
         {
@@ -78,7 +91,7 @@ namespace LevelPupper__Parser.dlls
 
             wait.Until(drv => ((IJavaScriptExecutor)drv).ExecuteScript("return document.readyState").ToString() == "complete");
         }
-        private string ApplyHeader(IWebDriver driver, WebDriverWait wait, Header header, string gameName)
+        private async Task<string> ApplyHeader(IWebDriver driver, WebDriverWait wait, Header header, string gameName)
         {
             IWebElement? isHidden = driver.FindElement(By.Id("id_hidden"));
             ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].checked = true;", isHidden);
@@ -164,9 +177,9 @@ namespace LevelPupper__Parser.dlls
 
             wait.Until(drv => ((IJavaScriptExecutor)drv).ExecuteScript("return document.readyState").ToString() == "complete");
 
-            return Regex.Match(driver.Url, @"/(?'id'\d+)/").Groups["id"].Value;
+            return await Task.FromResult(Regex.Match(driver.Url, @"/(?'id'\d+)/").Groups["id"].Value);
         }
-        private void ApplyDefaultDescriptionElements(IWebDriver driver, WebDriverWait wait, string gameName, string id)
+        private Task ApplyDefaultDescriptionElements(IWebDriver driver, WebDriverWait wait, string gameName, string id)
         {
             driver.Navigate().GoToUrl($"https://api.levelupper.com/admin/game_services/gameservice/?game__id__exact={Games.GetOptionValue(gameName)}"); // Variable
 
@@ -213,8 +226,10 @@ namespace LevelPupper__Parser.dlls
 
             IWebElement go = driver.FindElements(By.Name("index")).Where(x => x.Text.ToLower() == "go").First();
             go.Click();
+
+            return Task.CompletedTask;
         }
-        private void ApplyFooter(IWebDriver driver, WebDriverWait wait, Footer footer, string id, string gameName)
+        private Task ApplyFooter(IWebDriver driver, WebDriverWait wait, Footer footer, string id, string gameName)
         {
             driver.Navigate().GoToUrl($"https://api.levelupper.com/admin/game_services/gameservice/{id}/change/?_changelist_filters=game__id__exact%3D{Games.GetOptionValue(gameName)}#/tab/inline_2/");
             wait.Until(drv => ((IJavaScriptExecutor)drv).ExecuteScript("return document.readyState").ToString() == "complete");
@@ -530,9 +545,11 @@ namespace LevelPupper__Parser.dlls
             Thread.Sleep(1000);
             IWebElement saveorder = driver.FindElement(By.Name("_save"));
             saveorder.Click();
+
+            return Task.CompletedTask;
         }
 
-        public Dictionary<string, string> GetTextFromSurferSEO(Dictionary<string, string> surferUrls)
+        public async Task<Dictionary<string, string>> GetTextFromSurferSEO(Dictionary<string, string> surferUrls)
         {
             Parallel.ForEach(surferUrls, (i) =>
             {
@@ -567,7 +584,7 @@ namespace LevelPupper__Parser.dlls
                 finally { surfer.Quit(); }
             });
 
-            return surferUrls;
+            return await Task.FromResult(surferUrls);
         }
 
         private ChromeOptions GetOptions(bool? silent)
@@ -589,7 +606,8 @@ namespace LevelPupper__Parser.dlls
 
         public void Dispose()
         {
-
+            driver.Quit();
+            driver.Dispose();
         }
     }
 }

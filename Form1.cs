@@ -185,7 +185,7 @@ namespace LevelPupper__Parser
             button_Run_SParse.Enabled = true;
         }
 
-        private void button_Run_SParse_Click(object sender, EventArgs e)
+        private async void button_Run_SParse_Click(object sender, EventArgs e)
         {
             button_Run_SParse.Enabled = false;
 
@@ -202,19 +202,29 @@ namespace LevelPupper__Parser
 
             rtConsole.Clear();
 
-            SParse sparse = new(Config.GetAPI(), isSilent: cb_Silent.Checked, isForce: cb_Force.Checked);
-
-            urls = sparse.GetTextFromSurferSEO(urls);
-
-            foreach (var url in urls) 
+            await Task.Run(async () =>
             {
-                Header header = new(url.Value, defaultPossition: string.IsNullOrEmpty(textBox_DefaultPossition.Text) ? null : textBox_DefaultPossition.Text);
-                Footer footer = new(url.Value);
+                using (SParse sparse = new(Config.GetAPI(), isSilent: cb_Silent.Checked, isForce: cb_Force.Checked))
+                {
+                    urls = await sparse.GetTextFromSurferSEO(urls);
 
-                sparse.AddNewItem(header, footer, comboBox_Game.Text);
+                    await sparse.Init();
 
-                RTConsole.Write("Succecfully completed!");
-            }
+                    foreach (var url in urls)
+                    {
+                        try
+                        {
+                            Header header = new(url.Value, defaultPossition: string.IsNullOrEmpty(textBox_DefaultPossition.Text) ? null : textBox_DefaultPossition.Text);
+                            Footer footer = new(url.Value);
+
+                            await sparse.AddNewItem(header, footer, comboBox_Game.Text, url.Key);
+                        }
+                        catch { RTConsole.Write($"{url.Key} is skipped due to internal error.", Color.Red); }
+                    }
+                }
+            });
+
+            RTConsole.Write("Quit from selenium!");
         }
     }
 }
