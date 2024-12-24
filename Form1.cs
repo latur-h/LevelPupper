@@ -119,10 +119,11 @@ namespace LevelPupper__Parser
 
                 if (string.IsNullOrEmpty(textBox_Codename.Text))
                     RTConsole.Write("Error! Write a codename to proceed.", Color.Red);
+
                 return;
             }
 
-            _pupser = new(games[comboBox_Game.Text], textBox_Codename.Text, Config.GetAPI());
+            _pupser = new(games[comboBox_Game.Text], Path.GetFileName(textBox_Codename.Text), Config.GetAPI());
 
             if (!_pupser.Init())
                 return;

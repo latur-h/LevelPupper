@@ -42,25 +42,32 @@ function changeSelectElement(trigger, block)
     selectElement.dispatchEvent(event);
 }
 
-async function executeFunction(trigger, position, title, body) 
+(function interceptWindowOpen() {
+    const originalOpen = window.open;
+    window.open = function(...args) {
+      // Call the original window.open
+      const newWin = originalOpen.apply(this, args);
+      // Store the reference on the global window object
+      window._popupRef = newWin;
+      return newWin;
+    };
+  })();
+
+async function executeFunction(trigger, position, title, body)
 {
     document.querySelector(trigger).click();
     await delay(2000);
 
-    var relatedPopupDiv = document.querySelector('.related-popup');
-    var iframe = relatedPopupDiv.querySelector('iframe');
-    var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-
-    iframeDocument.querySelector('input[name="pos"]').value = position;
-    iframeDocument.querySelector('input[name="title"]').value = title;
-    iframeDocument.getElementById('cke_19').click();
+    window._popupRef.document.querySelector('input[name="pos"]').value = position;
+    window._popupRef.document.querySelector('input[name="title"]').value = title;
+    window._popupRef.document.getElementById('cke_19').click();
     await delay(500);
 
-    iframeDocument.querySelector('textarea[title="Rich Text Editor, id_content"]').value = body;
-    iframeDocument.getElementById('cke_19').click();
+    window._popupRef.document.querySelector('textarea[title="Rich Text Editor, id_content"]').value = body;
+    window._popupRef.document.getElementById('cke_19').click();
     await delay(500);
 
-    iframeDocument.querySelector('input[type="submit"][value="Save"]').click();
+    window._popupRef.document.querySelector('input[type="submit"][value="Save"]').click();
     await delay(500);
 }
 
