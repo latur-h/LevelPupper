@@ -55,6 +55,11 @@ function changeSelectElement(trigger, block)
 
 async function executeFunction(trigger, position, title, body)
 {
+    while(!_status)
+    {
+        await delay(100);
+    }
+
     document.querySelector(trigger).click();
     await delay(2000);
 
@@ -69,6 +74,8 @@ async function executeFunction(trigger, position, title, body)
 
     window._popupRef.document.querySelector('input[type="submit"][value="Save"]').click();
     await delay(500);
+
+    _status = false;
 }
 
 function insertStaticText(aboutTitle)
@@ -104,3 +111,8 @@ function insertStaticText(aboutTitle)
     document.getElementById("id_description_elements-16-title").value = "FAQs";
 }
 
+let _status = true;
+
+document.getElementById("main").addEventListener("click", () => {
+    _status = true;
+});
