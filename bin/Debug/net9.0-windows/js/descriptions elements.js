@@ -42,16 +42,16 @@ function changeSelectElement(trigger, block)
     selectElement.dispatchEvent(event);
 }
 
-(function interceptWindowOpen() {
+(function interceptWindowOpen()
+{
     const originalOpen = window.open;
-    window.open = function(...args) {
-      // Call the original window.open
-      const newWin = originalOpen.apply(this, args);
-      // Store the reference on the global window object
-      window._popupRef = newWin;
-      return newWin;
+    window.open = function(...args) 
+    {    
+        const newWin = originalOpen.apply(this, args);
+        window._popupRef = newWin;
+        return newWin;
     };
-  })();
+})();
 
 async function executeFunction(trigger, position, title, body)
 {

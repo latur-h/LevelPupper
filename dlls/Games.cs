@@ -20,7 +20,8 @@ namespace LevelPupper__Parser.dlls
                 { "Path of Exile", new _game("path-of-exile", "13", "poe") },
                 { "Destiny 2", new _game("d2", "3", "destiny") },
                 { "World of Warcraft", new _game("wow", "1", "wow retail") },
-                { "Call of Duty", new _game("cod", "16", "cod") }
+                { "Call of Duty", new _game("cod", "16", "cod") },
+                { "Path of Exile 2", new _game("path-of-exile-2", "17", "poe 2") }
             };
 
         public static Dictionary<string, string> GetCodenames() => games.ToDictionary(x => x.Key, x => x.Value.codename);
