@@ -60,6 +60,8 @@ async function executeFunction(trigger, position, title, body)
         await delay(100);
     }
 
+    _status = false;
+
     document.querySelector(trigger).click();
     await delay(2000);
 
@@ -74,8 +76,6 @@ async function executeFunction(trigger, position, title, body)
 
     window._popupRef.document.querySelector('input[type="submit"][value="Save"]').click();
     await delay(500);
-
-    _status = false;
 }
 
 function insertStaticText(aboutTitle)

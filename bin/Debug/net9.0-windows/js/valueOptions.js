@@ -128,8 +128,10 @@ async function Item()
 }
 async function CharacterBoost()
 {
-    document.querySelector('#tabs-6 #boost_methods-group fieldset.module .add-row a').click();
+    document.querySelector('#tabs-6 #boost_methods-group fieldset.module .add-row a').click();    
     await BoostMethod(0, 1, true, 0, "Piloted");
+    document.querySelector('#tabs-6 #boost_methods-group fieldset.module .add-row a').click();
+    await BoostMethod(1, 2, false, 1, "Self-Play");
 
     document.querySelector('#tabs-8 #service_options-group fieldset.module .add-row a').click();
     await Service(0, 1, "Difficulty", true, 2);
@@ -153,7 +155,8 @@ async function CharacterBoost()
     document.querySelector('#tabs-8 #service_options-group fieldset.module .add-row a').click();
     await Service(2, 3, "Additional Options", true, 4);
     await insertService(2, 1, 17, "Priority", false)
-    await insertService(2, 2, 17, "Appear Offline", true)
+    await insertService(2, 2, 17, "Stream", false)
+    await insertService(2, 3, 17, "Appear Offline", true)
 }
 
 await CharacterBoost();
